@@ -1,12 +1,9 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class 구슬탈출2_13460 {
+public class 구슬탈출2_백준제출용 {
     static class Beads implements Cloneable{
         int Rx;
         int Ry;
@@ -41,8 +38,7 @@ public class 구슬탈출2_13460 {
         }
     }
     public static void main(String[] args) throws Exception{
-        String path=System.getProperty("user.dir");
-        BufferedReader br=new BufferedReader(new FileReader(path+"/input13460.txt"));   
+        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));   
         BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st;
 
@@ -94,18 +90,11 @@ public class 구슬탈출2_13460 {
             }
         }
 
-        System.out.println("초기 연산 포맷:"+firstBead);
-
         for(int i=0;i<4;i++){
             Beads tmpBeads=firstBead.clone();
             tmpBeads.dir=i;
             q.add(tmpBeads);
-            System.out.println("초기 연산 큐:"+tmpBeads);
         }
-
-        System.out.println("큐 맨앞:"+q.peek());
-
-        System.out.println("연산을 시작합니다.");
 
         while(!q.isEmpty()){
             Beads curBeads=q.poll();
@@ -123,13 +112,11 @@ public class 구슬탈출2_13460 {
             int blueCnt=0;
 
             if(visited[curRx][curRy][curBx][curBy][curDir]==true){
-                System.out.println(curBeads+"이미 방문해서 패스");
                 continue;
             }
 
             visited[curRx][curRy][curBx][curBy][curDir]=true;
-            System.out.println(curBeads+"방문 처리");
-            System.out.println("연산중 포맷:"+curBeads);
+            
             if(curCnt>10) continue;
 
             while(true){ // Red bead
@@ -167,9 +154,6 @@ public class 구슬탈출2_13460 {
                     break;
                 }
             }
-
-            System.out.println("연산 후 Red bead:"+curRx+","+curRy);
-            System.out.println("연산 후 Blue bead:"+curBx+","+curBy);
             
             if(blueDown){ // 걍 실패
                 continue;
@@ -180,7 +164,6 @@ public class 구슬탈출2_13460 {
                     // calcCount=Math.min(calcCount, curCnt+1);
                     continue;
                 }else{
-                    System.out.println("성공");
                     calcCount=Math.min(calcCount, curCnt+1);
                     continue;
                 }
@@ -197,14 +180,10 @@ public class 구슬탈출2_13460 {
                 }
             }
 
-            System.out.println("redDown:"+redDown+", blueDown:"+blueDown);
             for(int i=1;i<4;i++){
-                //System.out.println("경우의 수 반복");
                 if((curDir+i)>3){
-                    System.out.println("dir add:"+(curDir+i-4));
                     q.add(new Beads(curRx, curRy, curBx, curBy, curDir+i-4, curCnt+1));
                 }else{
-                    System.out.println("dir add:"+(curDir+i));
                     q.add(new Beads(curRx, curRy, curBx, curBy, curDir+i, curCnt+1));
                 }
             }
