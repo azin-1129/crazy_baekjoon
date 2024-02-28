@@ -11,11 +11,13 @@ public class BOJ_2048_Easy_12100 {
         int[][] map;
         int dir;
         int cnt;
+        int dirCnt; // 한 방향으로 끝까지 병합
 
-        public Calc(int[][] map, int dir, int cnt){
+        public Calc(int[][] map, int dir, int cnt, int dirCnt){
             this.map=map;
             this.dir=dir;
             this.cnt=cnt;
+            this.dirCnt=dirCnt;
         }
     }
 
@@ -41,12 +43,12 @@ public class BOJ_2048_Easy_12100 {
         }
 
         for(int i=0;i<4;i++){
-            q.add(new Calc(map, 0, i));
+            q.add(new Calc(map, i, 0,0));
         }
 
         while(!q.isEmpty()){
             Calc calcTmp=q.poll();
-            if(calcTmp.cnt==5){
+            if(calcTmp.cnt==2){
                 // System.out.println("5번을 초과한 연산 시도. 중지");
                 continue;
             }
@@ -55,6 +57,7 @@ public class BOJ_2048_Easy_12100 {
 
             int[][] originMap=calcTmp.map;
             int[][] calcMap=new int[N][N];
+            boolean[][] integrated=new boolean[N][N]; // 덮어쓰기 처리
 
             System.out.println("연산 전 배열");
             for(int x=0;x<N;x++){
@@ -72,12 +75,14 @@ public class BOJ_2048_Easy_12100 {
                         for(int x=0;x<N;x++){
                             if(originMap[x][y]!=0){
                                 if(calcMap[stackX][y]==originMap[x][y]){
-                                    calcMap[stackX++][y]*=2;
+                                    calcMap[stackX++][y]*=2;  // 합치고 다음칸        
+                                    // 합쳤을 때 이전 칸과 병합이 가능한 지가 관건이 됨              
                                 }else{
-                                    if(stackX==N){
-                                        continue;
+                                    if(calcMap[stackX][y]!=0){
+                                        calcMap[++stackX][y]=originMap[x][y];
+                                    }else{
+                                        calcMap[stackX][y]=originMap[x][y];
                                     }
-                                    calcMap[stackX][y]=originMap[x][y];
                                 }
                             }
                         }
@@ -91,10 +96,11 @@ public class BOJ_2048_Easy_12100 {
                                 if(calcMap[stackX][y]==originMap[x][y]){
                                     calcMap[stackX--][y]*=2;
                                 }else{
-                                    if(stackX==0){
-                                        continue;
+                                    if(calcMap[stackX][y]!=0){
+                                        calcMap[--stackX][y]=originMap[x][y];
+                                    }else{
+                                        calcMap[stackX][y]=originMap[x][y];
                                     }
-                                    calcMap[stackX][y]=originMap[x][y];
                                 }
                             }
                         }
@@ -106,12 +112,10 @@ public class BOJ_2048_Easy_12100 {
                         for(int y=0;y<N;y++){
                             if(originMap[x][y]!=0){
                                 if(calcMap[x][stackY]==originMap[x][y]){
-                                    calcMap[x][stackY++]*=2;
-                                }else{
-                                    if(stackY==N){
-                                        continue;
-                                    }
+                                    calcMap[x][stackY++]*=2; // 합치면 stk 증가하면 됨(cascade 되지 않음)
+                                }else{ // 합칠 아이템이 아닐 때
                                     calcMap[x][stackY]=originMap[x][y];
+                                    // 합치지 않았을 때 stk에 그대로 넣어 버려서 덮어쓰기 문제 생김
                                 }
                             }
                         }
@@ -123,12 +127,10 @@ public class BOJ_2048_Easy_12100 {
                         for(int y=N-1;y>=0;y--){
                             if(originMap[x][y]!=0){
                                 if(calcMap[x][stackY]==originMap[x][y]){ // 합치기
+                                    integrated[x][stackY]=true;
                                     calcMap[x][stackY--]*=2;
                                 }else{
-                                    if(stackY==0){
-                                        continue;
-                                    }
-                                    calcMap[x][stackY]=originMap[x][y]; // 붙이기
+                                    calcMap[x][stackY]=originMap[x][y];
                                 }
                             }
                         }
@@ -151,9 +153,14 @@ public class BOJ_2048_Easy_12100 {
 
             // next calc add
             for(int i=0;i<4;i++){
-                if(calcTmp.dir==i) continue;
-
-                q.add(new Calc(calcMap, i, calcTmp.cnt+1));
+                if(calcTmp.dir==i){
+                    if(calcTmp.dirCnt==(N/2)){ // 해당 방향으로 끝까지 병합하지 않은 경우
+                        q.add(new Calc(calcMap, i, calcTmp.cnt, calcTmp.dirCnt+1)); // 끝까지 병합 시도
+                    }else{
+                        continue; // 해당 방향 끝남
+                    }
+                }
+                q.add(new Calc(calcMap, i, calcTmp.cnt+1, 0)); // 다음 연산
             }
         }
 
