@@ -56,7 +56,6 @@ public class BOJ_2048_Easy_12100_제출용 {
 
             int[][] originMap=calcTmp.map;
             int[][] calcMap=new int[N][N];
-            boolean[][] integrated=new boolean[N][N]; // 덮어쓰기 처리
 
             // shift
             switch(calcTmp.dir){
@@ -118,7 +117,6 @@ public class BOJ_2048_Easy_12100_제출용 {
                         for(int y=N-1;y>=0;y--){
                             if(originMap[x][y]!=0){
                                 if(calcMap[x][stackY]==originMap[x][y]){ // 합치기
-                                    integrated[x][stackY]=true;
                                     calcMap[x][stackY--]*=2;
                                 }else{
                                     calcMap[x][stackY]=originMap[x][y];
