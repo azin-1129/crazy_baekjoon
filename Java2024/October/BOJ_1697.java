@@ -31,7 +31,7 @@ public class BOJ_1697 {
 
     static void backTracking(int start, int second){
         // System.out.println("start:"+start+", second:"+second);
-        if(second>=result){
+        if(second>result){
             return;
         }
 
