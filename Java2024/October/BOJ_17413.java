@@ -13,15 +13,19 @@ class BOJ_17413{
 
         String s=br.readLine();
 
+        boolean isIneq=false; // 플래그
+
         for(int i=0;i<s.length();i++){
             char current=s.charAt(i);
 
             if(current=='<'){
+                isIneq=true;
                 while(!stack1.isEmpty()){
                     sb.append(stack1.pop());
                 }
                 sb.append(current);
             }else if(current=='>'){
+                isIneq=false;
                 while(!stack1.isEmpty()){
                     stack2.push(stack1.pop());
                 }
@@ -30,10 +34,14 @@ class BOJ_17413{
                 }
                 sb.append(current);
             }else if(current==' '){
-                while(!stack1.isEmpty()){
-                    sb.append(stack1.pop());
+                if(!isIneq){
+                    while(!stack1.isEmpty()){
+                        sb.append(stack1.pop());
+                    }
+                    sb.append(current);
+                }else{
+                    stack1.push(current);
                 }
-                sb.append(current);
             }else{
                 stack1.push(current);
 
