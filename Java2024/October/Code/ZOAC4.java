@@ -1,4 +1,4 @@
-package Java2024.October;
+package Code;
 
 import java.util.Scanner;
 
