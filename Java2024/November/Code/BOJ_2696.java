@@ -8,17 +8,30 @@ class BOJ_2696{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=2696;
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
-        StringBuilder sb;
+        StringBuilder sb=new StringBuilder();
+        StringTokenizer st;
 
         int T=Integer.parseInt(br.readLine());
 
         for(int t=1;t<=T;t++){
-            System.out.println("Test Case:"+t);
-            sb=new StringBuilder();
+            // System.out.println("Test Case:"+t);
 
             int M=Integer.parseInt(br.readLine());
 
-            int[] nums=Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            int[] nums=new int[M];
+            
+
+            int cnt=0;
+
+            int hasMore= (M%10)==0 ? 0 : 1;
+
+            for(int i=0;i<M/10+hasMore;i++){
+                st=new StringTokenizer(br.readLine());
+
+                while(st.hasMoreTokens()){
+                    nums[cnt++]=Integer.parseInt(st.nextToken());
+                }
+            }
 
             int maxHeapCnt=0;
             int minHeapCnt=0;
@@ -32,53 +45,57 @@ class BOJ_2696{
 
             PriorityQueue<Integer> minHeap=new PriorityQueue<>();
 
-            int[] numsCopy=nums.clone();
-            Arrays.sort(numsCopy);
+            int resultCnt=(M+1)/2; // 총 출력할 값 수
 
-            int middle=numsCopy[M/2]; // nums 배열의 중앙값
-            int resultCnt=1; // 총 출력할 값 수
+            sb.append(resultCnt+"\n"); // 수열에서 중앙값의 개수
 
-            sb.append(nums[0]+" "); // 처음 중앙값은 0번째 입력값
-            System.out.println("초기 중앙값은 "+nums[0]+"입니다.");
-            for(int i=1;i<M;i++){
-                System.out.println("iteration no."+(i+1));
-                int now=nums[i];
-                if(now==middle){
-                    continue;
+            for(int i=0;i<M;i++){
+                if(i>10 && i%10==0){
+                    sb.deleteCharAt(sb.length()-1);
+                    sb.append("\n");
                 }
 
-                if(now<middle){
+                // System.out.println("iteration no."+(i+1));
+                
+                int now=nums[i];
+
+                if(maxHeapCnt==minHeapCnt){
                     maxHeap.offer(now);
                     maxHeapCnt+=1;
                 }else{
                     minHeap.offer(now);
                     minHeapCnt+=1;
                 }
-                System.out.println("최대힙 상태:"+maxHeap);
-                System.out.println("최소힙 상태:"+minHeap);
-                System.out.println("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+
+                // maxHeap이 중앙값 이하 숫자만 갖도록 보정
+                if(!minHeap.isEmpty()){
+                    if(maxHeap.peek()>minHeap.peek()){
+                        int t1=maxHeap.poll();
+                        int t2=minHeap.poll();
+
+                        maxHeap.offer(t2);
+                        minHeap.offer(t1);
+                    }
+                }
+
+                // System.out.println("최대힙 상태:"+maxHeap);
+                // System.out.println("최소힙 상태:"+minHeap);
 
                 if(i%2==0){
-                    System.out.println("홀수 번째 입니다.");
+                    // System.out.println("홀수 번째 입니다.");
 
-                    if(maxHeapCnt>minHeapCnt){
-                        sb.append(maxHeap.peek()+" ");
-                        System.out.println(maxHeap.peek()+"추가");
-                    }else{
-                        sb.append(minHeap.peek()+" ");
-                        System.out.println(minHeap.peek()+"추가");
-                    }
-                    resultCnt+=1;
+                    sb.append(maxHeap.peek()+" ");
                 }
+
+                // System.out.println("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
             }
-
-            sb.insert(0, resultCnt+"\n");
-
             sb.deleteCharAt(sb.length()-1);
-
-            System.out.println(sb);
-
+            sb.append("\n");
         }
+
+        sb.deleteCharAt(sb.length()-1);
+
+        System.out.println(sb);
         br.close();
     }
 }
