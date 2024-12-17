@@ -82,6 +82,17 @@ class Trie{
 
         return true;
     }
+
+    public void printAllChilds(){
+        printAllChilds(this.root, 0);
+    }
+    
+    private void printAllChilds(Node node, int depth){
+        node.child.forEach((key,value)->{
+            System.out.println("--".repeat(depth)+key);
+            printAllChilds(value, depth+1);
+        });
+    }
 }
 
 class BOJ_14725{
@@ -90,7 +101,6 @@ class BOJ_14725{
         int bojNum=14725;
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
         StringTokenizer st;
-        ArrayList<String> keys=new ArrayList<>();
 
         int N=Integer.parseInt(br.readLine());
 
@@ -103,19 +113,15 @@ class BOJ_14725{
 
             String trieInput="";
 
-            for(int j=1;j<infoLength;j++){
+            for(int j=0;j<infoLength;j++){
                 trieInput+=st.nextToken();
             }
+
+            System.out.println("trie에 다음의 Input을 삽입합니다:"+trieInput);
             trie.insert(trieInput);
         }
 
-        Collections.sort(keys);
-
-        trie.root.child.forEach((key,value)->{
-            while(value.endOfWord!=true){
-                System.out.println(key+":"+value);
-            }
-        });
+        trie.printAllChilds();
 
         br.close();
     }
