@@ -4,119 +4,83 @@ import java.util.*;
 import java.io.*;
 
 class Node{
-    String data;
-    Node left;
-    Node right;
+    HashMap<Character, Node> child;
+    boolean endOfWord;
 
-    public Node(String data){
-        this.data=data;
+    Node(){
+        this.child=new HashMap<>();
     }
 }
 
-class BinaryTree{
+class Trie{
     Node root;
 
-    void createNode(String[] data){ 
-        for(int i=1;i<Integer.parseInt(data[0]);i++){
-            if(root==null){
-                root=new Node("*");
-    
-                if(root.left==null){
-                    root.left=new Node(data[i]);
-                }
-                else if(root.right==null){ // 사전 순서가 앞서는 게 왼쪽으로 오도록 스와핑
-                    if((int)root.left.data.charAt(0)>(int)data[i].charAt(0)){
-                        root.right.data=root.left.data;
-                        root.left.data=data[i];
-                    }else{
-                        root.right=new Node(data[i]);
-                    }
-                }
-            }else{
-                searchNode(root, data[1], data);
-            }
+    Trie(){
+        this.root=new Node();
+    }
+
+    public void insert(String str){
+        Node node=this.root;
+
+        for(int i=0;i<str.length();i++){
+            char c=str.charAt(i);
+
+            node.child.putIfAbsent(c, new Node());
+            node=node.child.get(c);
         }
     }
 
-    void searchNode(Node node, String rootData, String[] data){
-        if(node==null){
-            return;
-        }else if(node.data==rootData){
-            for(int i=1;i<Integer.parseInt(data[0]);i++){
-                if(root.left==null){
-                    root.left=new Node(data[i]);
-                }
-                else if(root.right==null){ // 사전 순서가 앞서는 게 왼쪽으로 오도록 스와핑
-                    if((int)root.left.data.charAt(0)>(int)data[i].charAt(0)){
-                        root.right.data=root.left.data;
-                        root.left.data=data[i];
-                    }else{
-                        root.right=new Node(data[i]);
-                    }
-                }
+    boolean search(String str){
+        Node node=this.root;
+
+        for(int i=0;i<str.length();i++){
+            char c=str.charAt(i);
+
+            if(node.child.containsKey(c)){
+                node=node.child.get(c);
+            }else{
+                return false;
+            }
+        }
+
+        return node.endOfWord;
+    }
+
+    public boolean delete(String str){
+        return this.delete(this.root, str, 0);
+    }
+
+    boolean delete(Node node, String str, int idx){
+        char c=str.charAt(idx);
+
+        if(!node.child.containsKey(c)){
+            return false;
+        }
+
+        Node current=node.child.get(c);
+        idx++;
+
+        if(idx==str.length()){
+            if(!current.endOfWord){
+                return false;
+            }
+
+            current.endOfWord=false;
+
+            if(current.child.isEmpty()){
+                node.child.remove(c);
             }
         }else{
-            searchNode(node.left, rootData, leftData, rightData);
-            searchNode(node.right, rootData, leftData, rightData);
-        }
-    }
-
-    void preOrder(Node node){
-        if(node!=null){
-            System.out.println(node.data);
-            if(node.left!=null){
-                preOrder(node.left);
+            if(!this.delete(current, str, idx)){
+                return false;
             }
-            if(node.right!=null){
-                preOrder(node.right);
+
+            if(!current.endOfWord && current.child.isEmpty()){
+                node.child.remove(c);
             }
         }
-    }
 
-    void inOrder(Node node){
-        if(node!=null){
-            if(node.left!=null){
-                preOrder(node.left);
-            }
-            System.out.println(node.data);
-            if(node.right!=null){
-                preOrder(node.right);
-            }
-        }
-    }
-
-    void postOrder(Node node){
-        if(node!=null){
-            if(node.left!=null){
-                preOrder(node.left);
-            }
-            System.out.println(node.data);
-            if(node.right!=null){
-                preOrder(node.right);
-            }
-        }
-    }
-
-    void levelOrder(){
-        this.levelOrder(root);
-    }
-
-    void levelOrder(Node node){
-        Queue<Node> q=new LinkedList<>();
-        q.add(node);
-
-        while(!q.isEmpty()){
-            Node current=q.poll();
-
-            System.out.println(current.data+" ");
-
-            if(current.left!=null){
-                q.add(current.left);
-            }
-            if(current.left!=null){
-                q.add(current.right);
-            }
-        }
+        return true;
     }
 }
 
@@ -126,26 +90,32 @@ class BOJ_14725{
         int bojNum=14725;
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
         StringTokenizer st;
+        ArrayList<String> keys=new ArrayList<>();
 
         int N=Integer.parseInt(br.readLine());
 
-        BinaryTree binaryTree=new BinaryTree();
+        Trie trie=new Trie();
 
         for(int i=0;i<N;i++){
             st=new StringTokenizer(br.readLine());
 
             int infoLength=Integer.parseInt(st.nextToken());
 
-            String[] feeds=new String[infoLength];
+            String trieInput="";
 
-            for(int j=0;j<infoLength;j++){
-                feeds[j]=st.nextToken();
+            for(int j=1;j<infoLength;j++){
+                trieInput+=st.nextToken();
             }
-
-            binaryTree.createNode(feeds);
+            trie.insert(trieInput);
         }
 
-        binaryTree.levelOrder();
+        Collections.sort(keys);
+
+        trie.root.child.forEach((key,value)->{
+            while(value.endOfWord!=true){
+                System.out.println(key+":"+value);
+            }
+        });
 
         br.close();
     }
