@@ -4,7 +4,7 @@ import java.util.*;
 import java.io.*;
 
 class Node{
-    HashMap<Character, Node> child;
+    HashMap<String, Node> child;
     boolean endOfWord;
 
     Node(){
@@ -19,68 +19,17 @@ class Trie{
         this.root=new Node();
     }
 
-    public void insert(String str){
+    public void insert(String[] strs){
         Node node=this.root;
 
-        for(int i=0;i<str.length();i++){
-            char c=str.charAt(i);
+        for(int i=0;i<strs.length;i++){
+            String str=strs[i];
 
-            node.child.putIfAbsent(c, new Node());
-            node=node.child.get(c);
-        }
-    }
-
-    boolean search(String str){
-        Node node=this.root;
-
-        for(int i=0;i<str.length();i++){
-            char c=str.charAt(i);
-
-            if(node.child.containsKey(c)){
-                node=node.child.get(c);
-            }else{
-                return false;
-            }
+            node.child.putIfAbsent(str, new Node());
+            node=node.child.get(str);
         }
 
-        return node.endOfWord;
-    }
-
-    public boolean delete(String str){
-        return this.delete(this.root, str, 0);
-    }
-
-    boolean delete(Node node, String str, int idx){
-        char c=str.charAt(idx);
-
-        if(!node.child.containsKey(c)){
-            return false;
-        }
-
-        Node current=node.child.get(c);
-        idx++;
-
-        if(idx==str.length()){
-            if(!current.endOfWord){
-                return false;
-            }
-
-            current.endOfWord=false;
-
-            if(current.child.isEmpty()){
-                node.child.remove(c);
-            }
-        }else{
-            if(!this.delete(current, str, idx)){
-                return false;
-            }
-
-            if(!current.endOfWord && current.child.isEmpty()){
-                node.child.remove(c);
-            }
-        }
-
-        return true;
+        node.endOfWord=true;
     }
 
     public void printAllChilds(){
@@ -88,10 +37,14 @@ class Trie{
     }
     
     private void printAllChilds(Node node, int depth){
-        node.child.forEach((key,value)->{
+        List<String> keySet=new ArrayList<>(node.child.keySet());
+
+        Collections.sort(keySet);
+
+        for(String key:keySet){
             System.out.println("--".repeat(depth)+key);
-            printAllChilds(value, depth+1);
-        });
+            printAllChilds(node.child.get(key), depth+1);
+        }
     }
 }
 
@@ -99,6 +52,7 @@ class BOJ_14725{
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=14725;
+
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
         StringTokenizer st;
 
@@ -111,14 +65,14 @@ class BOJ_14725{
 
             int infoLength=Integer.parseInt(st.nextToken());
 
-            String trieInput="";
+            String[] inputs=new String[infoLength];
 
             for(int j=0;j<infoLength;j++){
-                trieInput+=st.nextToken();
+                inputs[j]=st.nextToken();
             }
 
-            System.out.println("trie에 다음의 Input을 삽입합니다:"+trieInput);
-            trie.insert(trieInput);
+            // System.out.println("trie에 다음의 Input을 삽입합니다:"+Arrays.toString(inputs));
+            trie.insert(inputs);
         }
 
         trie.printAllChilds();
