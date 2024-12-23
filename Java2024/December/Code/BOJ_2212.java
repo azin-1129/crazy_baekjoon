@@ -50,18 +50,11 @@ class BOJ_2212{
         int bojNum=2212;
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
 
-        // 고속도로 위에 센서 N개
-        // 최대 K개의 집중국
-
-        // N개의 센서는 최소 1개의 집중국과 통신한다.
-        // 집중국 수신 가능 영역 길이를 최소화 해야한다.
-
         int N=Integer.parseInt(br.readLine());
         int K=Integer.parseInt(br.readLine());
 
         // HashSet 이용해서 distinct int[] 추출
         StringTokenizer st=new StringTokenizer(br.readLine());
-
         Set<Integer> hs=new HashSet<>();
 
         while(st.hasMoreTokens()){
@@ -70,35 +63,28 @@ class BOJ_2212{
         }
 
         int[] sensors=new int[hs.size()];
- 
         Iterator<Integer> iter=hs.iterator();
-
         int index=0;
 
         while(iter.hasNext()){
             sensors[index++]=iter.next();
         }
 
+        // 정렬되어 있다는 보장이 없으므로 정렬
         QuickSort2212 qs=new QuickSort2212();
         qs.quickSort(sensors);
 
-        // System.out.println("sensors:"+Arrays.toString(sensors));
-
+        // 기존에 입력받은 센서의 개수 N과 상이해졌기 때문에 센서 개수 변수 선언
         int sensorCount=sensors.length;
-
         int[] diffs=new int[sensorCount-1];
 
+        // 센서 원소 간 거리 차이를 가진 diffs 배열
         for(int i=1;i<sensorCount;i++){
-            // System.out.println(sensors[i]+"-"+sensors[i-1]);
             diffs[i-1]=sensors[i]-sensors[i-1];
         }
-
         qs.quickSort(diffs);
 
-        // System.out.println("diffs:"+Arrays.toString(diffs));
-
         int result=0;
-
         for(int i=0;i<sensorCount-K;i++){
             result+=diffs[i];
         }
