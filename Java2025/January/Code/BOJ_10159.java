@@ -4,64 +4,80 @@ import java.util.*;
 import java.io.*;
 
 class BOJ_10159{
-    static int[] parent;
+    static boolean[][] visited;
+    static int N, origin;
+    static int[] result;
+    static int[][] adj;
+    static int[] dx={-1,-1, 0, 1, 1, 1, 0, -1}, dy={0, 1, 1, 1, 0, -1, -1, -1};
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=10159;
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
         StringTokenizer st;
 
-        int N=Integer.parseInt(br.readLine());
+        N=Integer.parseInt(br.readLine());
         int M=Integer.parseInt(br.readLine());
 
-        parent=new int[N+1];
+        result=new int[N];
+        adj=new int[N][N];
+        visited=new boolean[N][N];
 
-        for(int i=0;i<N+1;i++){
-            parent[i]=i;
-        }
-        
         for(int i=0;i<M;i++){
             st=new StringTokenizer(br.readLine());
 
             int big=Integer.parseInt(st.nextToken());
             int small=Integer.parseInt(st.nextToken());
 
-            union(big, small);
+            adj[big-1][small-1]=1;
         }
 
-        System.out.println(Arrays.toString(parent));
+        for(int[] arr: adj){
+            System.out.println(Arrays.toString(arr));
+        }
 
-        // 물건의 개수 N 과 일부 물건 쌍의 비교 결과가 주어졌을 때, 각 물건에 대해서 그 물건과의 비교 결과를 알 수 없는 물건의 개수를 출력
-        
+        System.out.println();
 
-        // 1>2>3>4, 5>4, 6>5
+        for(int x=0;x<N;x++){
+            for(int y=0;y<N;y++){
+                if(adj[x][y]==1){
+                    origin=x;
+                    dfs(x, y, 0);
+                    System.out.println("재귀 끝");
+                }
+            }
+            visited=new boolean[N][N];
+        }
 
-        // 1은 6,5와 이어지지 않아서 2개
-        // 2는 6,5와 이어지지 않아서 2개
-        // 3은 6,5와 이어지지 않아서 2개
-        // 4는 모든 것과 이어져 0개
-        // 5는 1,2,3과 이어지지 않아 3개. 6,4와 연관
-        // 6은 5와 연관, 5는 4와 연관되어 3개
+        System.out.println(Arrays.toString(result));
 
-        // 물건 별로 이어지지 못하는 물건의 개수 출력
         br.close();
     }
-    public static void union(int a, int b){
-        int aParent=find(a);
-        int bParent=find(b);
-
-        if(aParent>bParent){
-            parent[aParent]=bParent;
-        }else{
-            parent[bParent]=aParent;
+    public static void dfs(int x, int y, int depth){
+        System.out.println("dfs:"+x+", "+y+", "+depth);
+        if(depth==N){
+            System.out.println("재귀 종료");
+            return;
         }
-    }
 
-    public static int find(int x){
-        if(parent[x]==x){
-            return parent[x];
-        }else{
-            return find(parent[x]);
+        for(int i=0;i<8;i++){
+            int nx=x+dx[i];
+            int ny=y+dy[i];
+
+            if(nx<0 || ny<0 || nx>=N || ny>=N){
+                continue;
+            }
+            if(visited[nx][ny]){
+                continue;
+            }
+
+            if(adj[nx][ny]==1){
+                result[origin]+=1;
+                System.out.println("x:"+x+", y:"+y+" 함수에서 nx:"+nx+", ny:"+ny+"로 재귀");
+                visited[nx][ny]=true;
+                dfs(nx, ny, depth+1);
+            }else{
+                continue;
+            }
         }
     }
 }
