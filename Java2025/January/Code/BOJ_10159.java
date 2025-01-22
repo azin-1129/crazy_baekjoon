@@ -1,83 +1,65 @@
 package Code;
 
-import java.util.*;
 import java.io.*;
-
-class BOJ_10159{
-    static boolean[][] visited;
-    static int N, origin;
-    static int[] result;
-    static int[][] adj;
-    static int[] dx={-1,-1, 0, 1, 1, 1, 0, -1}, dy={0, 1, 1, 1, 0, -1, -1, -1};
-    public static void main(String[] args) throws Exception{
+import java.util.*;
+ 
+public class BOJ_10159 {
+ 
+    public static void main(String[] args) throws Exception {
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=10159;
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
         StringTokenizer st;
+        StringBuilder sb=new StringBuilder();
+ 
+        int N = Integer.parseInt(br.readLine());
+        int M = Integer.parseInt(br.readLine());
 
-        N=Integer.parseInt(br.readLine());
-        int M=Integer.parseInt(br.readLine());
+        int[][] adj=new int[N][N];
 
-        result=new int[N];
-        adj=new int[N][N];
-        visited=new boolean[N][N];
+        for(int i=0;i<N;i++){
+            adj[i][i]=1;
+        }
 
         for(int i=0;i<M;i++){
-            st=new StringTokenizer(br.readLine());
+            st=new StringTokenizer(br.readLine(), " ");
+            int x=Integer.parseInt(st.nextToken())-1;
+            int y=Integer.parseInt(st.nextToken())-1;
 
-            int big=Integer.parseInt(st.nextToken());
-            int small=Integer.parseInt(st.nextToken());
-
-            adj[big-1][small-1]=1;
+            adj[x][y]=1;
+            adj[y][x]=-1;
         }
 
-        for(int[] arr: adj){
-            System.out.println(Arrays.toString(arr));
-        }
+        // 플로이드-워셜(대소 관계)
 
-        System.out.println();
+        for(int k=0;k<N;k++){
+            for(int x=0;x<N;x++){
+                for(int y=0;y<N;y++){
+                    if(adj[x][k]==1 && adj[k][y]==1){ // 정방향
+                        adj[x][y]=1;
+                    }
 
-        for(int x=0;x<N;x++){
-            for(int y=0;y<N;y++){
-                if(adj[x][y]==1){
-                    origin=x;
-                    dfs(x, y, 0);
-                    System.out.println("재귀 끝");
+                    if(adj[x][k]==-1 && adj[k][y]==-1){ // 역방향
+                        adj[x][y]=-1;
+                    }
                 }
             }
-            visited=new boolean[N][N];
         }
 
-        System.out.println(Arrays.toString(result));
+        for(int i=0;i<N;i++){
+            int cnt=0;
+            for(int j=0;j<N;j++){
+                if(adj[i][j]!=0){
+                    cnt+=1;
+                }
+            }
+            sb.append(N-cnt+"\n");
+        }
+
+        sb.deleteCharAt(sb.length()-1);
+
+        System.out.println(sb);
 
         br.close();
-    }
-    public static void dfs(int x, int y, int depth){
-        System.out.println("dfs:"+x+", "+y+", "+depth);
-        if(depth==N){
-            System.out.println("재귀 종료");
-            return;
-        }
-
-        for(int i=0;i<8;i++){
-            int nx=x+dx[i];
-            int ny=y+dy[i];
-
-            if(nx<0 || ny<0 || nx>=N || ny>=N){
-                continue;
-            }
-            if(visited[nx][ny]){
-                continue;
-            }
-
-            if(adj[nx][ny]==1){
-                result[origin]+=1;
-                System.out.println("x:"+x+", y:"+y+" 함수에서 nx:"+nx+", ny:"+ny+"로 재귀");
-                visited[nx][ny]=true;
-                dfs(nx, ny, depth+1);
-            }else{
-                continue;
-            }
-        }
     }
 }
