@@ -36,6 +36,8 @@ public class Softeer_나무_공격 {
         }
 
         System.out.println(countSurvivor());
+
+        br.close();
     }
     static void attack(int L, int R){
         for(int x=L;x<=R;x++){
