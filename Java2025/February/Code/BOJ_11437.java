@@ -31,7 +31,7 @@ class BOJ_11437{
             graph.get(inputs[1]).add(inputs[0]);
         }
 
-        init(1, 1, -1);
+        init(1, 0, -1);
 
         // parent 연산
         for(int k=1;k<H;k++){
@@ -81,7 +81,7 @@ class BOJ_11437{
         if(node1==node2){
             return node1;
         }
-        
+
         for(int i=(H-1);i>=0;i--){
             if(parent[node1][i]!=parent[node2][i]){
                 node1=parent[node1][i];
