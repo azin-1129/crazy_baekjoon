@@ -15,7 +15,7 @@ class Node1018{
 class BOJ_1018{
     static int result=Integer.MAX_VALUE;
     static int N,M;
-    static int[][] whiteGrid, blackGrid;
+    static int[][] grid;
     static int[] dx={1, 0};
     static int[] dy={0, 1};
     public static void main(String[] args) throws Exception{
@@ -27,9 +27,7 @@ class BOJ_1018{
         N=inputs[0];
         M=inputs[1];
 
-        int[][] grid=new int[N][M];
-        whiteGrid=new int[N][M];
-        blackGrid=new int[N][M];
+        grid=new int[N][M];
 
         for(int i=0;i<N;i++){
             String[] colors=br.readLine().split("");
@@ -46,29 +44,15 @@ class BOJ_1018{
             }
         }
 
-        for(int x=0;x<N;x++){
-            System.arraycopy(grid[x], 0, whiteGrid[x], 0, grid[x].length);
-        }
-
-        for(int x=0;x<N;x++){
-            System.arraycopy(grid[x], 0, blackGrid[x], 0, grid[x].length);
-        }
-
         for(int x=0;x<=(N-8);x++){
             for(int y=0;y<=(M-8);y++){
-                bfs(0, whiteGrid, x, y);
-                for(int z=0;z<N;z++){
-                    System.arraycopy(grid[z], 0, whiteGrid[z], 0, grid[z].length);
-                }
+                bfs(0, x, y);
             }
         }
 
         for(int x=0;x<=(N-8);x++){
             for(int y=0;y<=(M-8);y++){
-                bfs(1, blackGrid, x, y);
-                for(int z=0;z<N;z++){
-                    System.arraycopy(grid[z], 0, blackGrid[z], 0, grid[z].length);
-                }
+                bfs(1, x, y);
             }
         }
 
@@ -76,25 +60,23 @@ class BOJ_1018{
         br.close();
     }
 
-    static void bfs(int startColor, int[][] grid, int x, int y){
+    static void bfs(int startColor, int x, int y){
         Queue<Node1018> q=new ArrayDeque<>();
         boolean[][] visited=new boolean[N][M];
-
-        q.offer(new Node1018(x, y, startColor));
 
         int coloring=0;
         if(grid[x][y]!=startColor){
             coloring+=1;
-            grid[x][y]=startColor;
         }
+
+        q.offer(new Node1018(x, y, startColor));
+        visited[x][y]=true;
         while(!q.isEmpty()){
             Node1018 current=q.poll();
 
             int cx=current.x;
             int cy=current.y;
             int currentColor=current.color;
-
-            visited[cx][cy]=true;
 
             for(int i=0;i<2;i++){
                 int nx=cx+dx[i];
@@ -108,17 +90,19 @@ class BOJ_1018{
                     continue;
                 }
 
+                visited[nx][ny]=true;
+
                 if(grid[nx][ny]==currentColor){
                     coloring+=1;
-                    
                     if(currentColor==1){
-                        grid[nx][ny]=0;
+                        q.offer(new Node1018(nx, ny, 0));
                     }else{
-                        grid[nx][ny]=1;
+                        q.offer(new Node1018(nx, ny, 1));
                     }
+                }else{
+                    q.offer(new Node1018(nx, ny, grid[nx][ny]));
                 }
-
-                q.offer(new Node1018(nx, ny, grid[nx][ny]));
+                
             }
         }
 
