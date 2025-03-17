@@ -87,18 +87,21 @@ class BOJ_20057{
 
             System.out.println("현 dir: "+dir);
             System.out.println("y 좌표:"+nx+", "+ny);
+            System.out.println("x 좌표:"+cx+", "+cy);
 
             // 흩날리고 남은 모래를 측정해야함
             int sprayedSand=0;
+            int outRangeSand=0;
             // 모래 테이블 적용
-            for(int x=nx-2;x<nx+2;x++){
-                for(int y=ny-2;y<ny+2;y++){
-                    int spray=(int)((double)grid[nx][ny]*sandPalette[dir][x-(nx-2)][y-(ny-2)]);
+            for(int x=nx-2;x<=nx+2;x++){ // 1~5
+                for(int y=ny-2;y<=ny+2;y++){ // -1~3
+                    int spray=(int)Math.floor(((double)grid[nx][ny]*sandPalette[dir][x-(nx-2)][y-(ny-2)]));
+                    System.out.println("y의 Sand:"+grid[nx][ny]+", spray 값:"+spray);
                     // 범위 밖
                     if(x<0 || y<0 || x>=N || y>=N){
-                        System.out.println(spray+"만큼 빠져 나갑니다.");
+                        // System.out.println(spray+"만큼 빠져 나갑니다.");
                         result+=spray;
-                        sprayedSand+=spray;
+                        outRangeSand+=spray;
                         continue;
                     }
                      // 범위 안
@@ -114,9 +117,11 @@ class BOJ_20057{
             int ay=ny+dy[dir];
 
             if(ax<0 || ay<0 || ax>=N || ay>=N){
+                System.out.println((grid[nx][ny]-sprayedSand)+" <- grid 밖 alpha 값");
+                result+=(grid[nx][ny]-(outRangeSand+sprayedSand)); // 범위 밖으로 삐져나감
                 grid[nx][ny]=0;
             }else{
-                grid[nx+dx[dir]][ny+dy[dir]]=grid[nx][ny]-sprayedSand;
+                grid[ax][ay]+=(grid[nx][ny]-(outRangeSand+sprayedSand));
                 grid[nx][ny]=0;
             }
 
