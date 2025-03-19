@@ -16,7 +16,8 @@ class BOJ_4386{
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=4386;
-        BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));        StringTokenizer st;
+        BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
+        StringTokenizer st;
         List<List<Node4386>> graph;
 
         int N=Integer.parseInt(br.readLine());
@@ -38,41 +39,38 @@ class BOJ_4386{
             }
         }
         
-        double result=Double.MAX_VALUE;
-        for(int start=0;start<N;start++){
-            double resultTemp=0.0;
-            boolean[] visited=new boolean[N];
-            PriorityQueue<Node4386> pq=new PriorityQueue<>(new Comparator<Node4386>(){
-                @Override
-                public int compare(Node4386 n1, Node4386 n2){
-                    return (int)(n1.weight-n2.weight);
-                }
-            });
-    
-            pq.offer(new Node4386(start,0));
-            while(!pq.isEmpty()){
-                Node4386 currentNode=pq.poll();
-                int currentNodeIdx=currentNode.idx;
+        double result=0;
+        boolean[] visited=new boolean[N];
+        PriorityQueue<Node4386> pq=new PriorityQueue<>(new Comparator<Node4386>(){
+            @Override
+            public int compare(Node4386 n1, Node4386 n2){
+                return (int)(n1.weight-n2.weight);
+            }
+        });
 
-                if(visited[currentNodeIdx]){
+        pq.offer(new Node4386(0,0));
+        while(!pq.isEmpty()){
+            Node4386 currentNode=pq.poll();
+            int currentNodeIdx=currentNode.idx;
+
+            if(visited[currentNodeIdx]){
+                continue;
+            }
+
+            visited[currentNodeIdx]=true;
+            // System.out.println((currentNodeIdx+1)+"를 등록했습니다.");
+            // System.out.println(currentNode.weight);
+            result+=currentNode.weight;
+
+            for(Node4386 nextNode:graph.get(currentNodeIdx)){
+                if(visited[nextNode.idx]){
                     continue;
                 }
-    
-                visited[currentNodeIdx]=true;
-                // System.out.println((currentNodeIdx+1)+"를 등록했습니다.");
-                resultTemp+=currentNode.weight;
-
-                for(Node4386 nextNode:graph.get(currentNodeIdx)){
-                    if(visited[nextNode.idx]){
-                        continue;
-                    }
-                    pq.add(nextNode);
-                }
+                pq.add(nextNode);
             }
-            // System.out.println();
-            // System.out.println((start+1)+"부터 출발한 결과:"+resultTemp);
-            result=Math.min(result, resultTemp);
         }
+        // System.out.println();
+        // System.out.println((start+1)+"부터 출발한 결과:"+resultTemp);
         
         System.out.println(Math.round(result*100)/100.0);
         br.close();
