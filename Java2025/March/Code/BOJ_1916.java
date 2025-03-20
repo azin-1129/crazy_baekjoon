@@ -74,7 +74,7 @@ class BOJ_1916{
 
                 visited[currentNode.next]=true;
 
-                if((currentNode.weight+nextNode.weight)<dist[nextNode.next]){
+                if((dist[currentNode.next]+nextNode.weight)<dist[nextNode.next]){
                     dist[nextNode.next]=dist[currentNode.next]+nextNode.weight;
                     pq.offer(new Node1916(nextNode.next, dist[nextNode.next]));
                 }
