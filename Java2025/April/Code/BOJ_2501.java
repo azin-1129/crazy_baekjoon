@@ -13,9 +13,11 @@ class BOJ_2501{
         int K=Integer.parseInt(st.nextToken());
         
         boolean flag=false;
+        int count=0;
         for(int i=1;i<N;i++){
             if(N%i==0){
-                if(i==K){
+                count+=1;
+                if(count==K){
                     System.out.println(i);
                     flag=true;
                     break;
