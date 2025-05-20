@@ -4,43 +4,40 @@ import java.util.*;
 import java.io.*;
 
 class BOJ_3273{
-    static int LIMIT=2;
-    static int result, x, n;
-    static boolean[] visited;
-    static int[] combResult=new int[2];
-    static int[] nums;
     public static void main(String[] args) throws Exception{
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        // BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        String filepath=System.getProperty("user.dir")+"\\Input\\";
+        int bojNum=3273;
+        BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
 
-        // 원소 수가 최대 2개인 조합 원소의 합이 x와 일치하는 조합 수 구하기?
-        n=Integer.parseInt(br.readLine());
-        nums=new int[n];
+        int n=Integer.parseInt(br.readLine());
+        int[] nums=new int[n];
         StringTokenizer st=new StringTokenizer(br.readLine(), " ");
         for(int i=0;i<n;i++){
             nums[i]=Integer.parseInt(st.nextToken());
         }
-        x=Integer.parseInt(br.readLine());
+        int x=Integer.parseInt(br.readLine());
 
-        visited=new boolean[n];
-        comb(0, 0);
+        int front=0;
+        int end=n-1;
+
+        Arrays.sort(nums);
+
+        int result=0;
+        while(front<end){
+            int current=nums[front]+nums[end];
+            if(current==x){
+                result+=1;
+                front+=1;
+                end-=1;
+            }else if(current>x){
+                end-=1;
+            }else{
+                front+=1;
+            }
+        }
+
         System.out.println(result);
         br.close();
-    }
-    static void comb(int start, int depth){
-        if(depth==LIMIT){
-            if((combResult[0]+combResult[1])==x){
-                result+=1;
-            }
-            return;
-        }
-
-        for(int i=start;i<n;i++){
-            if(!visited[i]){
-                combResult[depth]=nums[i];
-                visited[i]=true;
-                comb(i+1, depth+1);
-                visited[i]=false;
-            }
-        }
     }
 }
