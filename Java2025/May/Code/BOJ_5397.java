@@ -13,8 +13,9 @@ class BOJ_5397{
 
         StringBuilder sb=new StringBuilder();
         for(int t=0;t<tc;t++){
-            int cursor=0;
+            // int cursor=0;
             LinkedList<String> list=new LinkedList<>();
+            ListIterator<String> iter=list.listIterator();
 
             String[] inputs=br.readLine().split("");
             // System.out.println(Arrays.toString(inputs));
@@ -24,30 +25,24 @@ class BOJ_5397{
 
                 switch(current){
                     case "-":
-                        if(cursor>=1){
-                            list.remove(cursor-1);
-                            cursor-=1;
+                        if(iter.hasPrevious()){
+                            iter.previous();
+                            iter.remove();
                         }
                         break;
                     case "<":
-                        if(cursor>0){
-                            cursor-=1;
+                        if(iter.hasPrevious()){
+                            iter.previous();
                         }
                         break;
                     case ">":
-                        if(cursor!=list.size()){
-                            cursor+=1;
+                        if(iter.hasNext()){
+                            iter.next();
                         }
                         break;
                     default:
-                        if(cursor==list.size()){
-                            list.add(current);
-                            cursor+=1;
-                        }else{
-                            // System.out.println(cursor+"에 문자 "+current+"를 삽입했습니다.");
-                            list.add(cursor, current);
-                            cursor+=1;
-                        }
+                        iter.add(current);
+                        // iter.next();
                         break;
                 }
             }
