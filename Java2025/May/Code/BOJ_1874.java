@@ -13,43 +13,25 @@ class BOJ_1874{
         
         StringBuilder sb=new StringBuilder();
         Stack<Integer> stack=new Stack<>();
-        // int firstValue=Integer.parseInt(br.readLine());
-        // for(int i=1;i<=firstValue;i++){
-        //     stack.add(i);
-        //     sb.append("+\n");
-        // }
-        // stack.pop();
-        // sb.append("-\n");
         boolean flag=false;
         int currentValue=0;
         for(int i=0;i<N;i++){
             int number=Integer.parseInt(br.readLine());
 
-            if(stack.isEmpty()){
+            if(currentValue<number){
                 for(int val=currentValue+1;val<=number;val++){
                     stack.add(val);
                     sb.append("+\n");
                 }
                 currentValue=number;
-            }
-            int peekValue=stack.peek();
-            if(peekValue<number){
-                for(int val=currentValue+1;val<=number;val++){
-                    stack.add(val);
-                    sb.append("+\n");
-                }
-                stack.pop();
-                currentValue=number;
-                sb.append("-\n");
             }else{
-                if(peekValue==number){
-                    stack.pop();
-                    sb.append("-\n");
-                }else{
+                if(stack.peek()!=number){
                     flag=true;
                     break;
                 }
             }
+            stack.pop();
+            sb.append("-\n");
         }
         if(flag){
             System.out.println("NO");
