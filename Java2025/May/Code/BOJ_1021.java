@@ -53,15 +53,15 @@ class BOJ_1021{
                 // 연산을 하지 않아도 갱신될 수 있겠다.
 
                 for(int j=i;j<M;j++){
-                    idxs[j]=idxs[j]-idx-1; // calc1() 때문에 -1
+                    idxs[j]=idxs[j]-idx;
                     if(idxs[j]<0){
-                        idxs[j]=(dqSize-idxs[j]);
+                        idxs[j]=(dqSize+idxs[j]);
                     }
                 }
             }else if(middle<idx){ // 우
                 // dq.size()-현 idx번 연산한 후, calc1
                 // 연산 3
-                for(int j=0;j<(dqSize-idx);j++){
+                for(int j=0;j<=(dqSize-idx);j++){
                     calc3();
                 }
                 calc1();
@@ -81,9 +81,9 @@ class BOJ_1021{
                 calc1();
 
                 for(int j=i;j<M;j++){
-                    idxs[j]=idxs[j]-idx-1; // calc1() 때문에 -1
+                    idxs[j]=idxs[j]-idx; // calc1() 때문에 -1
                     if(idxs[j]<0){
-                        idxs[j]=(dqSize-idxs[j]);
+                        idxs[j]=(dqSize+idxs[j]);
                     }
                 }
             }
