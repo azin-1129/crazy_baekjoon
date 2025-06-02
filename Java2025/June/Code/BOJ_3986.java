@@ -3,7 +3,7 @@ package Code;
 import java.util.*;
 import java.io.*;
 
-class BOJ_문제번호{
+class BOJ_3986{
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=3986;
