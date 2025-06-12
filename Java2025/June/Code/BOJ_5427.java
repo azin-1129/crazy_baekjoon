@@ -19,10 +19,26 @@ class BOJ_5427{
             return Integer.compare(this.depth, n.depth); // 오름차순
         }
     }
+    static class FireInfo{
+        int x;
+        int y;
+        int iter;
+
+        public FireInfo(int x, int y, int iter){
+            this.x=x;
+            this.y=y;
+            this.iter=iter;
+        }
+
+        public String toString(){
+            return "x:"+x+", y:"+y;
+        }
+    }
     static int[] dx={-1, 1, 0, 0};
     static int[] dy={0, 0, -1, 1};
     static int w, h;
     static char[][] building;
+    static Queue<FireInfo> fq;
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=5427;
@@ -59,12 +75,21 @@ class BOJ_5427{
             // pq 내 타입은.. 현X, 현Y, 이동 수
 
             PriorityQueue<Node> pq=new PriorityQueue<>();
+            fq=new ArrayDeque<>();
             int moveDepth=-1;
             int result=-1;
             boolean flag=false;
             Node node=new Node(startX, startY, 0);
             pq.offer(node);
             printing("초기 배열 상태입니다.");
+            for(int x=0;x<h;x++){
+                for(int y=0;y<w;y++){
+                    if(building[x][y]=='*'){
+                        fq.offer(new FireInfo(x, y, 0));
+                    }
+                }
+            }
+            System.out.println("fq를 초기화했습니다:"+fq);
             while(!pq.isEmpty()){
                 Node current=pq.poll();
 
@@ -72,13 +97,12 @@ class BOJ_5427{
                 int currentY=current.y;
                 System.out.println("cx:"+currentX+", cy:"+currentY);
 
-                // 이동 수가 다르다면 화재 예정 마킹을 실행한다.
+                // 이동 수가 다르다면 1초가 지난 것이라 판단하고 방화한다.
                 if(current.depth!=moveDepth){
-                    System.out.println("마킹을 실행하고 있습니다.");
-                    marking();
                     moveDepth+=1;
-
-                    printing("마킹을 완료했습니다.");
+                    // 방화를 1칸씩만 해야 하는데..
+                    fire(moveDepth);
+                    printing("불이 번졌습니다.");
                 }
 
                 // 방문했다면 패스
@@ -116,23 +140,11 @@ class BOJ_5427{
                     if(building[nextX][nextY]=='#'){
                         continue;
                     }
-                    // 불이 붙을 예정이면 제낀다.
-                    if(building[nextX][nextY]=='X'){
-                        continue;
-                    }
                     // pq에 다음 좌표를 삽입한다.
                     pq.offer(new Node(nextX, nextY, current.depth+1));
                 }
                 if(flag){
                     break;
-                }
-
-                // 만약 다음 노드의 depth가 더 높다면, 예정해 두었던 불을 지펴야 한다.
-                if(!pq.isEmpty()){
-                    if(moveDepth<pq.peek().depth){
-                        fire();
-                        printing("예정대로 불을 붙였습니다.");
-                    }
                 }
             }
             if(result==-1){
@@ -146,44 +158,36 @@ class BOJ_5427{
         System.out.println(sb);
         br.close();
     }
-    static void marking(){ // 마킹 값은 'X' 이다.
-        for(int x=0;x<h;x++){
-            for(int y=0;y<w;y++){
-                if(building[x][y]=='*'){
-                    System.out.println(x+", "+y+" 좌표는 불이네요");
-                    // 4방향 조회
-                    for(int d=0;d<4;d++){
-                        int nextX=x+dx[d];
-                        int nextY=y+dy[d];
-
-                        System.out.println("마킹할 자리를 탐색하고 있어요:"+nextX+", "+nextY);
-                        // 건물 밖엔 불이 붙을 수 없다.
-                        if(nextX<0 || nextY<0 || nextX>=h || nextY>=w){
-                            continue;
-                        }
-                        // 이미 불? 패스
-                        if(building[nextX][nextY]=='*'){
-                            continue;
-                        }
-                        // 벽? 패스
-                        if(building[nextX][nextY]=='#'){
-                            continue;
-                        }
-
-                        // 불 붙을 예정
-                        building[nextX][nextY]='X';
-                        System.out.println(nextX+", "+nextY+"에 마킹했습니다.");
-                    }
-                }
+    static void fire(int iter){
+        while(!fq.isEmpty()){
+            if(fq.peek().iter!=iter){
+                break;
             }
-        }
-    }
-    static void fire(){
-        for(int x=0;x<h;x++){
-            for(int y=0;y<w;y++){
-                if(building[x][y]=='X'){
-                    building[x][y]='*';
+            FireInfo fi=fq.poll();
+            int x=fi.x;
+            int y=fi.y;
+            for(int d=0;d<4;d++){
+                int nextX=x+dx[d];
+                int nextY=y+dy[d];
+
+                System.out.println("불을 붙일 자리를 탐색하고 있어요:"+nextX+", "+nextY);
+                // 건물 밖엔 불이 붙을 수 없다.
+                if(nextX<0 || nextY<0 || nextX>=h || nextY>=w){
+                    continue;
                 }
+                // 이미 불? 패스
+                if(building[nextX][nextY]=='*'){
+                    continue;
+                }
+                // 벽? 패스
+                if(building[nextX][nextY]=='#'){
+                    continue;
+                }
+
+                // 불 붙을 예정
+                building[nextX][nextY]='*';
+                System.out.println(nextX+", "+nextY+"에 불이 붙었습니다.");
+                fq.offer(new FireInfo(nextX, nextY, iter+1));
             }
         }
     }
