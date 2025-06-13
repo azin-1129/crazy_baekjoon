@@ -8,11 +8,13 @@ class BOJ_2206{
         int x;
         int y;
         int depth;
+        boolean crashed;
 
-        public Node(int x, int y, int depth){
+        public Node(int x, int y, int depth, boolean crashed){
             this.x=x;
             this.y=y;
             this.depth=depth;
+            this.crashed=crashed;
         }
 
         @Override
@@ -25,22 +27,10 @@ class BOJ_2206{
             return "Node info: ("+x+","+y+"), depth: "+depth;
         }
     }
-    static class Wall{
-        int x;
-        int y;
-  
-        public Wall(int x, int y){
-            this.x=x;
-            this.y=y;
-        }
-
-        @Override
-        public String toString(){
-            return "Wall info: ("+x+","+y+")";
-        }
-    }
     static int N, M;
     static int[][] map;
+    static boolean[][] visitedNoCrash;
+    static boolean[][] visitedCrash;
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=2206;
@@ -53,78 +43,81 @@ class BOJ_2206{
         N=Integer.parseInt(st.nextToken());
         M=Integer.parseInt(st.nextToken());
         map=new int[N][M];
-        Queue<Wall> wq=new ArrayDeque<>();
+
+        boolean isWallExists=false;
         for(int x=0;x<N;x++){
             String[] inputs=br.readLine().split("");
             for(int y=0;y<M;y++){
                 int current=Integer.parseInt(inputs[y]);
 
                 if(current==1){
-                    wq.offer(new Wall(x, y)); // info 중, 벽 좌표를 파악한다.
+                    isWallExists=true;
                 }
                 map[x][y]=Integer.parseInt(inputs[y]);
             }
         }
 
-        // System.out.println("벽 정보를 확보했습니다:"+wq);
-
         int result=Integer.MAX_VALUE;
         // 벽이 없다면, (N+M-1)을 반환한다.
-        if(wq.isEmpty()){
-            System.out.println(N+(M-1));
+        if(!isWallExists){
+            result=N+(M-1);
         }else{
-            while(!wq.isEmpty()){
-                boolean[][] visited=new boolean[N][M];
+            visitedNoCrash=new boolean[N][M];
+            visitedCrash=new boolean[N][M];
+            PriorityQueue<Node> pq=new PriorityQueue<>();
+            pq.offer(new Node(0, 0, 1, false));
 
-                Wall wall=wq.poll();
-                int wallX=wall.x;
-                int wallY=wall.y;
-                // 벽을 1칸씩 없앤다.
-                map[wallX][wallY]=0;
+            while(!pq.isEmpty()){
+                // visitedInfo();
+                Node current=pq.poll();
+                int currentX=current.x;
+                int currentY=current.y;
+                int currentDepth=current.depth;
+                boolean currentCrashed=current.crashed;
 
-                // printing("벽을 파괴했습니다.");
-                // BFS를 진행(목적지 도달 시 최단 거리 값 갱신 후 break)
-                PriorityQueue<Node> pq=new PriorityQueue<>();
-                // 시작 위치는 0, 0
-                pq.offer(new Node(0, 0, 1));
-                while(!pq.isEmpty()){
-                    Node current=pq.poll();
-                    int currentX=current.x;
-                    int currentY=current.y;
-                    int currentDepth=current.depth;
+                if(currentX==(N-1) & currentY==(M-1)){
+                    result=Math.min(result, currentDepth);
+                    break;
+                }
 
-                    // 만약 도착? (N-1, M-1): 최단거리 갱신 후 break
-                    if(currentX==(N-1) & currentY==(M-1)){
-                        result=Math.min(result, currentDepth);
-                        break;
-                    }
-                    // 방문? continue
-                    if(visited[currentX][currentY]){
+                if(currentCrashed){
+                    if(visitedCrash[currentX][currentY]){
                         continue;
                     }
-                    // 방문 처리
-                    visited[currentX][currentY]=true;
 
-                    // 4방향 탐색 후 offer
-                    for(int d=0;d<4;d++){
-                        int nextX=currentX+dx[d];
-                        int nextY=currentY+dy[d];
+                    visitedCrash[currentX][currentY]=true;
+                }else{
+                    if(visitedNoCrash[currentX][currentY]){
+                        continue;
+                    }
 
-                        // 범위 밖? continue
-                        if(nextX<0 || nextY<0 || nextX>=N || nextY>=M){
-                            continue;
+                    visitedNoCrash[currentX][currentY]=true;
+                }
+
+                for(int d=0;d<4;d++){
+                    int nextX=currentX+dx[d];
+                    int nextY=currentY+dy[d];
+
+                    if(nextX<0 || nextY<0 || nextX>=N || nextY>=M){
+                        continue;
+                    }
+
+                    // 벽 한 번 부쉈던 애가 가봤을 때 방문 처리 되어서,
+                    // 그 후 벽을 안 부쉈던 애가 가 보지도 못하는 듯
+                    
+                    // 그 외에는, 다음 좌표가 벽일 시 crack을 true로 바꾸고 벽으로 진행한다.
+                    if(currentCrashed){ // 부딪힌 이력이 있다면 0으로만 진행 가능
+                        if(map[nextX][nextY]!=1){
+                            pq.offer(new Node(nextX, nextY, currentDepth+1, currentCrashed));
                         }
-                        
-                        // 벽이면 진행 못함
-                        if(map[nextX][nextY]==1){
-                            continue;
+                    }else{ // 부딪힌 이력이 없다면
+                        if(map[nextX][nextY]==1){ // 벽을 부수고 진행 가능
+                            pq.offer(new Node(nextX, nextY, currentDepth+1, !currentCrashed));
+                        }else{ // 0으로 진행
+                            pq.offer(new Node(nextX, nextY, currentDepth+1, currentCrashed));
                         }
-
-                        pq.offer(new Node(nextX, nextY, currentDepth+1));
                     }
                 }
-                // 다음 BFS를 시작하기 전에, 벽 정보를 복구한다.
-                map[wallX][wallY]=1;
             }
         }
 
@@ -142,4 +135,11 @@ class BOJ_2206{
         }
         System.out.println();
     }
+    // static void visitedInfo(){
+    //     System.out.println("방문 현황입니다.");
+    //     for(int x=0;x<N;x++){
+    //         System.out.println(Arrays.toString(visited[x]));
+    //     }
+    //     System.out.println();
+    // }
 }
