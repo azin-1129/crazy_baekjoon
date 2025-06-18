@@ -19,8 +19,8 @@ class BOJ_2573{
         }
     }
 
-    static int[] dx={-1, 1, 0, 0, -1, -1, 1, 1};
-    static int[] dy={0, 0, -1, 1, -1, 1, -1, 1};
+    static int[] dx={-1, 1, 0, 0};
+    static int[] dy={0, 0, -1, 1};
     static boolean[][] visited;
     static int[][] map;
     static int result=Integer.MAX_VALUE;
@@ -130,7 +130,7 @@ class BOJ_2573{
 
             visited[currentX][currentY]=true;
 
-            for(int d=0;d<8;d++){
+            for(int d=0;d<4;d++){
                 int nx=currentX+dx[d];
                 int ny=currentY+dy[d];
 
