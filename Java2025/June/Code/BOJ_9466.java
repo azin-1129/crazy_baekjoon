@@ -4,9 +4,10 @@ import java.util.*;
 import java.io.*;
 
 class BOJ_9466{
-    static ArrayList<Integer> NodesInDfs;
+    // static ArrayList<Integer> NodesInDfs;
     static int start;
     static boolean[] enabled;
+    static boolean[] visited;
     static int[] graph;
     static int result;
     public static void main(String[] args) throws Exception{
@@ -21,16 +22,21 @@ class BOJ_9466{
             int N=Integer.parseInt(br.readLine());
             StringTokenizer st=new StringTokenizer(br.readLine(), " ");
             graph=new int[N+1];
-            for(int i=1;i<=N;i++){
-                graph[i]=Integer.parseInt(st.nextToken());
-            }
-
             enabled=new boolean[N+1];
             for(int i=1;i<=N;i++){
-                NodesInDfs=new ArrayList<>();
-                NodesInDfs.add(i);
-                start=i;
-                dfs(graph[i]);
+                graph[i]=Integer.parseInt(st.nextToken());
+                if(i==graph[i]){
+                    enabled[i]=true;
+                    result+=1;
+                }
+            }
+
+            visited=new boolean[N+1];
+            for(int i=1;i<=N;i++){
+                if(!enabled[i]){
+                    start=i;
+                    dfs(graph[i]);
+                }
                 // System.out.println("DFS가 끝났습니다.");
                 // System.out.println();
             }
@@ -45,44 +51,18 @@ class BOJ_9466{
         br.close();
     }
     static void dfs(int current){
-        // System.out.println("현재 노드는 "+current);
-        // 1
-        if(enabled[current]){
-            // System.out.println("해당 노드는 이미 팀이 있습니다.");
-            return;
-        }
-        
-        // 2
-        if(graph[current]==current){
-            // System.out.println("해당 노드는 자기 자신을 참조합니다.");
+        if(visited[current]){ // 사이클 발생
             enabled[current]=true;
             result+=1;
-            return;
+        }else{
+            visited[current]=true;
         }
-        
-        // 3
-        if(current!=start & NodesInDfs.contains(current)){
-            // System.out.println("순환이 어긋났습니다.");
-            int idx=NodesInDfs.indexOf(current);
-            for(int i=idx;i<NodesInDfs.size();i++){
-                enabled[NodesInDfs.get(i)]=true;
-                result+=1;
-            }
-            return;
+
+        if(!enabled[graph[current]]){
+            dfs(graph[current]);
         }
-        
-        // 4
-        if(start==current){
-            // System.out.println("순환 완료되었습니다.");
-            // System.out.println(NodesInDfs);
-            for(int node:NodesInDfs){
-                enabled[node]=true;
-                result+=1;
-            }
-            return;
-        }
-        
-        NodesInDfs.add(current);
-        dfs(graph[current]);
+
+        visited[current]=false;
+        enabled[current]=true;
     }
 }
