@@ -36,7 +36,6 @@ class BOJ_2146{
     static int[][] map;
     static int N;
     static int result=Integer.MAX_VALUE;
-    static Queue<Node> Islandq=new PriorityQueue<>(); // 현재 섬 좌표들 저장
     static Queue<Node> edgeq=new PriorityQueue<>(); // 외곽 좌표 저장
     static int count;
     public static void main(String[] args) throws Exception{
@@ -85,7 +84,6 @@ class BOJ_2146{
             }
 
             visitedIsland[currX][currY]=true;
-            Islandq.offer(new Node(currX, currY));
 
             for(int d=0;d<4;d++){
                 int nx=currX+dx[d];
