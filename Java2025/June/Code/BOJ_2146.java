@@ -31,7 +31,6 @@ class BOJ_2146{
     }
 
     static boolean[][] visitedIsland;
-    static boolean[][] visited;
     static int[] dx={-1, 1, 0, 0};
     static int[] dy={0, 0, -1, 1};
     static int[][] map;
@@ -47,7 +46,6 @@ class BOJ_2146{
         N=Integer.parseInt(br.readLine());
         map=new int[N][N];
         visitedIsland=new boolean[N][N];
-        visited=new boolean[N][N];
         StringTokenizer st;
         for(int i=0;i<N;i++){
             st=new StringTokenizer(br.readLine(), " ");
@@ -109,30 +107,52 @@ class BOJ_2146{
         while(!Islandq.isEmpty()){
             // 시작하는 섬의 좌표들을 하나하나 DFS하는 로직
             Node curr=Islandq.poll();
-            dfs(curr.x, curr.y, 0);
+            bfs(curr.x, curr.y);
         }
     }
-    static void dfs(int x, int y, int depth){
-        System.out.println(x+", "+y+", depth:"+depth);
-        if(visited[x][y]){ // 이미 탐색해 본 좌표이다.
-            return;
-        }
+        static void bfs(int startX, int startY){
+        // 아 bfs 하고잇었네
+        PriorityQueue<Node> pq=new PriorityQueue<>();
+        // System.out.println("탐색 연산을 시작합니다.");
+        // System.out.println("탐색 시작 위치는 "+startX+", "+startY+" 입니다.");
+        // System.out.println(pq);
 
-        if(visitedIsland[x][y]==false & map[x][y]==1){ // 다른 섬의 육지라면 최단거리 갱신
-            result=Math.min(result, depth);
-            return;
-        }
+        boolean[][] visited=new boolean[N][N];
+        pq.offer(new Node(startX, startY, 0));
+        while(!pq.isEmpty()){
+            // 시작하는 섬의 좌표들로부터 다른 섬까지 다리를 놓아 보는 로직
+            Node curr=pq.poll();
+            int currX=curr.x;
+            int currY=curr.y;
+            int currDepth=curr.depth;
 
-        visited[x][y]=true;
-        for(int d=0;d<4;d++){
-            int nx=x+dx[d];
-            int ny=y+dy[d];
+            // 섬의 다른 좌표가 가본 곳도 가봐야 함.. 섬 좌표 제외 ㅠㅠ
 
-            if(nx<0 || ny<0 || nx>=N || ny>=N){
+            // 해당 좌표에서 출발한다.
+            // visited[x][y]=true면 이미 가본 곳. continue
+            // map[x][y]=1일 때, visitedIsland[x][y]=true면 동지이므로 result 갱신 X
+            // visited[x][y]= true
+            if(visited[currX][currY]){ // 이미 탐색해 본 좌표이다.
                 continue;
             }
-            dfs(nx, ny, depth+1);
+
+            if(visitedIsland[currX][currY]==false & map[currX][currY]==1){ // 다른 섬의 육지라면 최단거리 갱신
+                result=Math.min(result, currDepth);
+                // System.out.println("여기라고 판단했어요:"+currX+", "+currY);
+                // System.out.println("depth는 "+currDepth+"입니다!");
+            }
+
+            visited[currX][currY]=true; // 방문 처리
+
+            for(int d=0;d<4;d++){
+                int nx=currX+dx[d];
+                int ny=currY+dy[d];
+                
+                if(nx<0 || ny<0 || nx>=N || ny>=N){
+                    continue;
+                }
+                pq.offer(new Node(nx, ny, currDepth+1));
+            }
         }
-        visited[x][y]=false;
     }
 }
