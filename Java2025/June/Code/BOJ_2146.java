@@ -37,6 +37,7 @@ class BOJ_2146{
     static int N;
     static int result=Integer.MAX_VALUE;
     static Queue<Node> Islandq=new PriorityQueue<>(); // 현재 섬 좌표들 저장
+    static Queue<Node> edgeq=new PriorityQueue<>(); // 외곽 좌표 저장
     static int count;
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
@@ -59,13 +60,11 @@ class BOJ_2146{
                 if(map[x][y]==1 & visitedIsland[x][y]==false){
                     marking(x, y); // visitedIsland 마킹
                     search(); // 최단 다리 검색
-                    // System.out.println("탐색이 완료되었습니다.");
-                    // System.out.println();
                 }
             }
         }
 
-        System.out.println(result-1);
+        System.out.println(result);
         br.close();
     }
     static void marking(int startX, int startY){
@@ -81,6 +80,7 @@ class BOJ_2146{
                 continue;
             }
             if(map[currX][currY]==0){
+                edgeq.offer(new Node(currX, currY, 0));
                 continue;
             }
 
@@ -99,24 +99,14 @@ class BOJ_2146{
         }
     }
     static void search(){
-        // PriorityQueue<Node> pq=new PriorityQueue<>();
-        count+=1;
-        // System.out.println(count+"번째 섬의 좌표 목록입니다.");
-        // System.out.println(Islandq);
-
-        while(!Islandq.isEmpty()){
-            // 시작하는 섬의 좌표들을 하나하나 DFS하는 로직
-            Node curr=Islandq.poll();
+        while(!edgeq.isEmpty()){
+            // 외곽부터 BFS하는 로직
+            Node curr=edgeq.poll();
             bfs(curr.x, curr.y);
         }
     }
         static void bfs(int startX, int startY){
-        // 아 bfs 하고잇었네
         PriorityQueue<Node> pq=new PriorityQueue<>();
-        // System.out.println("탐색 연산을 시작합니다.");
-        // System.out.println("탐색 시작 위치는 "+startX+", "+startY+" 입니다.");
-        // System.out.println(pq);
-
         boolean[][] visited=new boolean[N][N];
         pq.offer(new Node(startX, startY, 0));
         while(!pq.isEmpty()){
@@ -126,20 +116,12 @@ class BOJ_2146{
             int currY=curr.y;
             int currDepth=curr.depth;
 
-            // 섬의 다른 좌표가 가본 곳도 가봐야 함.. 섬 좌표 제외 ㅠㅠ
-
-            // 해당 좌표에서 출발한다.
-            // visited[x][y]=true면 이미 가본 곳. continue
-            // map[x][y]=1일 때, visitedIsland[x][y]=true면 동지이므로 result 갱신 X
-            // visited[x][y]= true
             if(visited[currX][currY]){ // 이미 탐색해 본 좌표이다.
                 continue;
             }
 
             if(visitedIsland[currX][currY]==false & map[currX][currY]==1){ // 다른 섬의 육지라면 최단거리 갱신
                 result=Math.min(result, currDepth);
-                // System.out.println("여기라고 판단했어요:"+currX+", "+currY);
-                // System.out.println("depth는 "+currDepth+"입니다!");
             }
 
             visited[currX][currY]=true; // 방문 처리
