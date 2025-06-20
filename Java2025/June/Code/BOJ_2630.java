@@ -30,7 +30,6 @@ class BOJ_2630{
         br.close();
     }
     static void cut(int startX, int endX, int startY, int endY){
-        // System.out.println(startX+","+startY+" to "+endX+","+endY);
         if((endX-startX)==1){
             count[paper[startX][startY]]+=1;
             return;
@@ -43,8 +42,6 @@ class BOJ_2630{
         int diff=(endX-startX)/2;
         for(int x=startX;x<endX;x+=diff){
             for(int y=startY;y<endY;y+=diff){
-                // System.out.println(x+","+y+" to "+(x+diff)+","+(y+diff)); // start
-                // end?
                 cut(x, x+diff, y, y+diff);
             }
         }
