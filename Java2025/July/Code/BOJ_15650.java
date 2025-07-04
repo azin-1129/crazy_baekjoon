@@ -18,12 +18,12 @@ class BOJ_문제번호{
         result=new int[M];
         visited=new boolean[N];
 
-        perm(0, 0);
+        rec(0, 0);
         sb.deleteCharAt(sb.length()-1);
         System.out.println(sb);
         br.close();
     }
-    static void perm(int start, int depth){
+    static void rec(int start, int depth){
         if(depth==M){
             for(int i=0;i<M;i++){
                 sb.append(result[i]+" ");
@@ -37,7 +37,7 @@ class BOJ_문제번호{
             if(!visited[i]){
                 visited[i]=true;
                 result[depth]=(i+1);
-                perm(i+1, depth+1);
+                rec(i+1, depth+1);
                 visited[i]=false;
             }
         }
