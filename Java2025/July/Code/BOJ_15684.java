@@ -6,7 +6,7 @@ import java.io.*;
 class BOJ_15684{
     static boolean[][] result, origin;
     static int N, M, H;
-    static int count=Integer.MAX_VALUE;
+    static int count=-1;
     static int[] dx={-1, 1, 0, 0};
     static int[] dy={0, 0, -1, 1};
     public static void main(String[] args) throws Exception{
@@ -19,35 +19,34 @@ class BOJ_15684{
         N=Integer.parseInt(st.nextToken());
         M=Integer.parseInt(st.nextToken());
         H=Integer.parseInt(st.nextToken());
-        result=new boolean[N][M];
-        origin=new boolean[N][M];
+        result=new boolean[H][N];
+        origin=new boolean[H][N];
         for(int i=0;i<M;i++){
             st=new StringTokenizer(br.readLine(), " ");
             origin[Integer.parseInt(st.nextToken())-1][Integer.parseInt(st.nextToken())-1]=true;
         }
 
-        for(int cnt=1;cnt<=(M+H);cnt++){
-            comb(0, 0, 0, 0, cnt);
-        }
+        comb(0, 0, 0, 0);
 
         System.out.println(count);
         br.close();
     }
-    static void comb(int start, int depth, int lineNumber, int lineCount, int maxLineCount){
-        if(lineCount>maxLineCount){
+    static void comb(int start, int depth, int lineNumber, int lineCount){
+        System.out.println("comb:"+start+", "+depth+", "+lineNumber+", "+lineCount);
+        if(lineCount>3){
             System.out.println("가로선 너무 많이 고름");
             return;
         }
         
-        if(lineNumber>=N){
+        if(lineNumber>=H){
             System.out.println("완성된 2D 배열입니다.");
-            for(int x=0;x<N;x++){
+            for(int x=0;x<H;x++){
                 System.out.println(Arrays.toString(result[x]));
             }
             // 가로선이 연속되는 열이 있는지 확인
             if(isPossibleColumn()){
                 System.out.println("조건을 만족한 2D 배열입니다.");
-                for(int x=0;x<N;x++){
+                for(int x=0;x<H;x++){
                     System.out.println(Arrays.toString(result[x]));
                 }
                 System.out.println();
@@ -56,21 +55,20 @@ class BOJ_15684{
             return;
         }
 
-        if(depth>=M){ // 한 라인 끝남
-            System.out.println("한 라인 끝");
-            for(int x=0;x<N;x++){
-                System.out.println(Arrays.toString(result[x]));
-            }
+        if(depth>=N){ // 한 라인 끝남
+            System.out.println("라인 "+(lineNumber+1)+"번 끝");
+            System.out.println(Arrays.toString(result[lineNumber]));
             System.out.println();
             if(isPossibleLine(lineNumber)){ // 접하는지 확인
-                comb(0, 0, lineNumber+1, lineCount, maxLineCount);
+                comb(0, 0, lineNumber+1, lineCount);
             }
             return;
         }
         
-        for(int i=start;i<M;i++){
+        for(int i=start;i<N;i++){
             result[lineNumber][depth]=true;
-            comb(i+1, depth+1, lineNumber, lineCount+1, maxLineCount);
+            comb(i+1, depth+1, lineNumber, lineCount+1);
+            result[lineNumber][depth]=false;
         }
     }
     static boolean isPossibleColumn(){
