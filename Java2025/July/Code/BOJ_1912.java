@@ -12,29 +12,22 @@ class BOJ_1912{
         int N=Integer.parseInt(br.readLine());
         int[] numbers=new int[N+1];
         int[] dp=new int[N+1];
+        int result=-1001;
+
         StringTokenizer st=new StringTokenizer(br.readLine(), " ");
         for(int i=1;i<=N;i++){
             int value=Integer.parseInt(st.nextToken());
             numbers[i]=value;
-            dp[i]=-1001;
+            result=Math.max(numbers[i], result);
+        }
+        
+        dp[1]=numbers[1];
+        for(int i=2;i<=N;i++){
+            dp[i]=Math.max(dp[i-1]+numbers[i], numbers[i]);
+            result=Math.max(result, dp[i]);
         }
 
-        int dpIdx=1;
-        int originIdx=0;
-        for(int i=1;i<=N;i++){
-            System.out.println(Arrays.toString(dp));
-            if(dp[dpIdx]<numbers[i]){
-                if((originIdx+1)!=i){
-                    dpIdx=1;
-                }else{
-                    dp[dpIdx++]=numbers[i];
-                    originIdx=i;
-                }
-            }
-        }
-        System.out.println(Arrays.toString(dp));
-
-        // System.out.println(result);
+        System.out.println(result);
         br.close();
     }
 }
