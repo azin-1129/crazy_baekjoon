@@ -9,29 +9,32 @@ class BOJ_1912{
         int bojNum=1912;
         BufferedReader br=new BufferedReader(new FileReader(filepath+"input"+bojNum+".txt"));
 
-        int result=-1001;
         int N=Integer.parseInt(br.readLine());
         int[] numbers=new int[N+1];
-        int[][] dp=new int[N+1][N+1];
+        int[] dp=new int[N+1];
         StringTokenizer st=new StringTokenizer(br.readLine(), " ");
-        for(int i=0;i<N;i++){
+        for(int i=1;i<=N;i++){
             int value=Integer.parseInt(st.nextToken());
-            if(result<value){
-                result=value;
-            }
             numbers[i]=value;
-            dp[i][i]=value;
+            dp[i]=-1001;
         }
 
-        for(int x=1;x<=N;x++){
-            for(int y=(x+1);y<=N;y++){
-                dp[x][y]=dp[x][y-1]+numbers[y];
-
-                result=Math.max(dp[x][y], result);
+        int dpIdx=1;
+        int originIdx=0;
+        for(int i=1;i<=N;i++){
+            System.out.println(Arrays.toString(dp));
+            if(dp[dpIdx]<numbers[i]){
+                if((originIdx+1)!=i){
+                    dpIdx=1;
+                }else{
+                    dp[dpIdx++]=numbers[i];
+                    originIdx=i;
+                }
             }
         }
+        System.out.println(Arrays.toString(dp));
 
-        System.out.println(result);
+        // System.out.println(result);
         br.close();
     }
 }
