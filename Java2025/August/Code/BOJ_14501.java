@@ -26,13 +26,8 @@ class BOJ_14501{
         br.close();
     }
     static void scoring(int idx, int score){
-        System.out.println(idx+"번째 날입니다. 현재 이득:"+score);
         if(idx>N){
-            return;
-        }
-
-        if(idx==N){
-            result=Math.max(result, score);
+            result=Math.max(result, score-reserv[idx][1]);
             return;
         }
 
