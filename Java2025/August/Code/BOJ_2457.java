@@ -40,8 +40,14 @@ class BOJ_2457{
         }
 
         for(int i=0;i<N;i++){
-            // 피는 날이 12월 이상: 선택 안함
-            if(flowers[i].bloom[0]>=12) continue;
+            if(flowers[i].bloom[0]==12){ // 피는 날이 12월: 첫 꽃으로 선택 안함
+                continue;
+            }
+            if(flowers[i].closed[0]==12){ // 지는 날이 12월일 때,
+                if(flowers[i].bloom[0]>3 & flowers[i].bloom[1]>1){ // 피는 날이 3/1을 초과한다면 선택 안함
+                    continue;
+                }
+            }
             System.out.println("우선 꽃"+i+"를 고릅니다.");
             choose(i, flowers[i].closed[0], flowers[i].closed[1], 1);
         }
@@ -51,6 +57,7 @@ class BOJ_2457{
     }
     static void choose(int idx, int closedMonth, int closedDay, int count){
         if(closedMonth==12){
+            System.out.println(count+"개 골랐어요.");
             result=Math.min(result, count);
             return;
         }
@@ -66,58 +73,85 @@ class BOJ_2457{
     static boolean isNextFlowerEnabled(Flower origin, Flower next){
         int originClosedMonth=origin.closed[0];
         int originClosedDay=origin.closed[1];
-        int nextFlowerBloomMonth=next.bloom[0];
-        int nextFlowerBloomDay=next.bloom[1];
-        int nextFlowerBloomEndMonth=next.closed[0];
-        int nextFlowerBloomEndDay=next.closed[1]-1;
+        int nextBloomMonth=next.bloom[0];
+        int nextBloomDay=next.bloom[1];
+        int nextBloomEndMonth=next.closed[0];
+        int nextBloomEndDay=next.closed[1]-1;
 
-        if(nextFlowerBloomEndDay==0){ // 이전 월로 교체해야 한다.
-            switch(nextFlowerBloomEndMonth){
+        if(nextBloomEndDay==0){ // 이전 월로 교체해야 한다.
+            switch(nextBloomEndMonth){
                 case 2:
-                    nextFlowerBloomEndDay=31;
+                    nextBloomEndDay=31;
                     break;
                 case 3:
-                    nextFlowerBloomEndDay=28;
+                    nextBloomEndDay=28;
                     break;
                 case 4:
-                    nextFlowerBloomEndDay=31;
+                    nextBloomEndDay=31;
                     break;
                 case 5:
-                    nextFlowerBloomEndDay=30;
+                    nextBloomEndDay=30;
                     break;
                 case 6:
-                    nextFlowerBloomEndDay=31;
+                    nextBloomEndDay=31;
                     break;
                 case 7:
-                    nextFlowerBloomEndDay=30;
+                    nextBloomEndDay=30;
                     break;
                 case 8:
-                    nextFlowerBloomEndDay=31;
+                    nextBloomEndDay=31;
                     break;
                 case 9:
-                    nextFlowerBloomEndDay=31;
+                    nextBloomEndDay=31;
                     break;
                 case 10:
-                    nextFlowerBloomEndDay=30;
+                    nextBloomEndDay=30;
                     break;
                 case 11:
-                    nextFlowerBloomEndDay=30;
+                    nextBloomEndDay=30;
                     break;
                 case 12:
-                    nextFlowerBloomEndDay=30;
+                    nextBloomEndDay=30;
                     break;
             }
-            nextFlowerBloomEndMonth-=1;
+            nextBloomEndMonth-=1;
         }
 
         System.out.println(origin+" 정보");
         System.out.println(originClosedMonth+"/"+originClosedDay);
         System.out.println(next+" 정보");
-        System.out.println(nextFlowerBloomMonth+"/"+nextFlowerBloomDay);
-        System.out.println(nextFlowerBloomEndMonth+"/"+nextFlowerBloomEndDay);
+        System.out.println(nextBloomMonth+"/"+nextBloomDay);
+        System.out.println(nextBloomEndMonth+"/"+nextBloomEndDay);
         // origin 지는 날이 next의 핀 날 이상, 지는 날-1 이하인가?
-        if(originClosedMonth>nextFlowerBloomMonth & originClosedMonth<nextFlowerBloomEndMonth){
-            
+        if(checkDateRight(originClosedMonth, originClosedDay, nextBloomMonth, nextBloomDay)
+        & checkDateLeft(originClosedMonth, originClosedDay, nextBloomEndMonth, nextBloomEndDay)){
+            return true;
+        }
+
+        return false;
+    }
+    static boolean checkDateLeft(int om, int od, int nm, int nd){
+        if(om<=nm){
+            if(om==nm){
+                if(nd>=od){
+                    return true;
+                }
+            }else{
+                return true;
+            }
+        }
+
+        return false;
+    }
+    static boolean checkDateRight(int om, int od, int nm, int nd){
+        if(om>=nm){
+            if(om==nm){
+                if(nd<=od){
+                    return true;
+                }
+            }else{
+                return true;
+            }
         }
 
         return false;
