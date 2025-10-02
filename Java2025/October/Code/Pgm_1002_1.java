@@ -34,7 +34,7 @@ class Pgm_1002_1 {
         scores.put('N', 0);
 
         // 2. 성격 유형 점수 계산
-        // 응답 값이 -면 surveyItem.charAt(0)+1, +면 surveyItem.charAt(1)+1
+        // 응답 점수가 -면 원래 score+Math.abs(응답 점수), +면 원래 score+응답 점수
         for(int i=0;i<length;i++){
             int valueBefore=0;
             if(choices[i]<0){
