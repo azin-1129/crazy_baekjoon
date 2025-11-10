@@ -14,35 +14,35 @@ class BOJ_11403 {
         for(int i=0;i<N;i++){
             StringTokenizer st=new StringTokenizer(br.readLine(), " ");
             for(int j=0;j<N;j++){
-                matrix[i][j]=Integer.parseInt(st.nextToken());
+                int value=Integer.parseInt(st.nextToken());
+                if(value==0){
+                    value=101; // Math.min 비교가 가능하되, int 범위 선에서 깨지지 않는 값
+                }
+                matrix[i][j]=value;
             }
         }
 
-        for(int i=0;i<N;i++){
-            for(int j=0;j<N;j++){
-                if(matrix[i][j]==1){
-                    find(i, j);
+        for(int k=0;k<N;k++){
+            for(int x=0;x<N;x++){
+                for(int y=0;y<N;y++){
+                    matrix[x][y]=Math.min(matrix[x][y], matrix[x][k]+matrix[k][y]);
                 }
             }
         }
 
         for(int x=0;x<N;x++){
-            System.out.println(Arrays.toString(matrix[x]));
-        }
-        br.close();
-    }
-    static void find(int startRow, int currentRow){
-        if(startRow==currentRow){
-            return;
-        }
-
-        for(int i=0;i<N;i++){
-            if(matrix[currentRow][i]==1){
-                matrix[startRow][i]=1;
-
-                    find(startRow,i);
-                
+            for(int y=0;y<N;y++){
+                if(matrix[x][y]==101){
+                    matrix[x][y]=0;
+                }else if(matrix[x][y]>1){
+                    matrix[x][y]=1;
+                }
             }
         }
+
+        for(int x=0;x<N;x++){
+            System.out.println(Arrays.toString(matrix[x]).replaceAll("[\\[\\],]",""));
+        }
+        br.close();
     }
 }
