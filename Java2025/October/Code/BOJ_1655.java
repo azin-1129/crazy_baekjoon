@@ -9,9 +9,9 @@ class BOJ_1655 {
         int bojNum = 1655;
         BufferedReader br = new BufferedReader(new FileReader(filepath + "input" + bojNum + ".txt"));
 
-        // -10,000에 가까운 값을 좌 pq, (내림차순)
-        // 10,000에 가까운 값들 우 pq, (오름차순)
-        // 큐 밸런스를 맞춰야 하나? 음양만 따져서는 안될 듯
+        // 좌 pq (내림차순)
+        // 우 pq (오름차순)
+
         // int leftSize=0;
         // int rightSize=0;
 
@@ -34,65 +34,23 @@ class BOJ_1655 {
         for(int i=0;i<N;i++){
             int number=Integer.parseInt(br.readLine());
 
-            // // 2개 까지는 그냥 queue에 삽입
-            // if(i<2){
-            //     pqLeft.offer(number);
-            //     System.out.println("L:"+pqLeft);
-            //     System.out.println("R:"+pqRight);
-            //     System.out.println("mid:"+pqLeft.peek());
-            //     continue;
-            // }
-
-            if(pqLeft.isEmpty()){
-                if(!pqRight.isEmpty()){
-                    if(number>pqRight.peek()){
-                        pqRight.offer(number);
-                    }else if(number<pqRight.peek()){
-                        pqLeft.offer(number);
-                    }
-                }else{
-                    pqLeft.offer(number);
-                }
-            }else if(pqRight.isEmpty()){
-                if(!pqLeft.isEmpty()){
-                    if(number<pqLeft.peek()){
-                        pqLeft.offer(number);
-                    }else if(number>pqLeft.peek()){
-                        pqRight.offer(number);
-                    }
-                }else{
-                    pqLeft.offer(number);
-                }
+            // 원소 개수 밸런싱(항상 pqLeft 원소 개수가 pqRight 이상)
+            if(pqLeft.size()==pqRight.size()){
+                pqLeft.offer(number);
             }else{
-                if(number<pqLeft.peek()){
-                    pqLeft.offer(number);
-                }else if(number>pqRight.peek()){
-                    pqRight.offer(number);
-                }else{
-                    pqLeft.offer(number);
+                pqRight.offer(number);
+            }
+
+            // 원소 크기 밸런싱
+            if(!pqLeft.isEmpty() & !pqRight.isEmpty()){
+                if(pqLeft.peek() > pqRight.peek()){
+                    int leftVal=pqLeft.poll();
+                    int rightVal=pqRight.poll();
+                    pqRight.offer(leftVal);
+                    pqLeft.offer(rightVal);
                 }
             }
 
-            // i(원소 개수)가 짝수일 때, 밸런싱 가능
-            if((i+1)%2!=0){
-                System.out.println(pqLeft.peek());
-                continue;
-            }
-
-            int leftSize=pqLeft.size();
-            int rightSize=pqRight.size();
-            if(leftSize<rightSize){
-                while(pqLeft.size()!=pqRight.size()){
-                    pqLeft.offer(pqRight.poll());
-                }
-            }else if(leftSize>rightSize){
-                while(pqLeft.size()!=pqRight.size()){
-                    pqRight.offer(pqLeft.poll());
-                }
-            }
-
-            // System.out.println("L:"+pqLeft);
-            // System.out.println("R:"+pqRight);
             System.out.println(pqLeft.peek());
         }
 
