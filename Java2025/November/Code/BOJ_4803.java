@@ -41,8 +41,7 @@ class BOJ_4803 {
                 if(visited[v]){
                     continue;
                 }
-                bfs(v);
-                System.out.println(Arrays.toString(visited));
+                dfs(v);
             }
 
             sb.append("Case "+testCase+": ");
@@ -59,31 +58,23 @@ class BOJ_4803 {
         System.out.println(sb);
         br.close();
     }
-    static void bfs(int v){
+    static void dfs(int v){
         int[] parent=new int[n+1];
-        Queue<Integer> q=new ArrayDeque<>();
-        parent[1]=1;
-        q.offer(v);
+        Stack<Integer> q=new Stack<>();
+        parent[v]=v;
+        q.push(v);
         while(!q.isEmpty()){
-            int current=q.poll();
-            if(visited[current]){
-                continue;
-            }
-            System.out.println(Arrays.toString(parent));
-            System.out.println("현재 "+current+"방문중.");
+            int current=q.pop();
             visited[current]=true;
+            System.out.println(current+" 방문중.");
             for(int next : graph.get(current)){
+                // 사이클일 경우, 아묻따 return. 트리가 아님
                 if(visited[next]){
-                    System.out.println("가봤던 곳");
+                    System.out.println("사이클?");
                     return;
                 }
-                // 사이클일 경우, 아묻따 return. 트리가 아님
-                // if(parent[current]==next){
-                //     System.out.println("사이클인디요..");
-                //     return;
-                // }
-                parent[next]=parent[current];
-                q.offer(next);
+                System.out.println("다음은 "+next);
+                q.push(next);
             }
         }
         treeCount+=1;
