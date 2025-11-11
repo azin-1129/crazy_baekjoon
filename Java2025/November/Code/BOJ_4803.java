@@ -41,14 +41,21 @@ class BOJ_4803 {
                 if(visited[v]){
                     continue;
                 }
-                dfs(v);
+
+                System.out.println("시작점: "+v);
+                if(!dfs(v)){
+                    System.out.println("사이클이라고 봄.");
+                }else{
+                    System.out.println("괜찮지 않나요?");
+                }
+                System.out.println(Arrays.toString(visited));
             }
 
             sb.append("Case "+testCase+": ");
             if(treeCount==0){
                 sb.append("No trees."+"\n");
             }else if(treeCount==1){
-                sb.append("There is one tree"+"\n");
+                sb.append("There is one tree."+"\n");
             }else{
                 sb.append("A forest of "+treeCount+" trees."+"\n");
             }
@@ -58,7 +65,7 @@ class BOJ_4803 {
         System.out.println(sb);
         br.close();
     }
-    static void dfs(int v){
+    static boolean dfs(int v){
         int[] parent=new int[n+1];
         Stack<Integer> q=new Stack<>();
         parent[v]=v;
@@ -67,17 +74,24 @@ class BOJ_4803 {
             int current=q.pop();
             visited[current]=true;
             System.out.println(current+" 방문중.");
+            System.out.println(Arrays.toString(parent));
             for(int next : graph.get(current)){
-                // 사이클일 경우, 아묻따 return. 트리가 아님
                 if(visited[next]){
-                    System.out.println("사이클?");
-                    return;
+                    continue;
                 }
+
                 System.out.println("다음은 "+next);
+                // 다른 부모와 이어진 정점을 방문하고 있다.
+                if(parent[next]!=0){ // 이미 다른 부모가 있음
+                    // System.out.println("사이클?");
+                    visited[next]=true;
+                    return false;
+                }
+                parent[next]=current;
                 q.push(next);
             }
         }
         treeCount+=1;
-        return;
+        return true;
     }
 }
