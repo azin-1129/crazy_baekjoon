@@ -77,16 +77,13 @@ class BOJ_4803 {
             System.out.println(Arrays.toString(parent));
             for(int next : graph.get(current)){
                 if(visited[next]){
-                    continue;
+                    if(parent[current]==next){
+                        continue;
+                    }else{
+                        return false;
+                    }
                 }
 
-                System.out.println("다음은 "+next);
-                // 다른 부모와 이어진 정점을 방문하고 있다.
-                if(parent[next]!=0){ // 이미 다른 부모가 있음
-                    // System.out.println("사이클?");
-                    visited[next]=true;
-                    return false;
-                }
                 parent[next]=current;
                 q.push(next);
             }
