@@ -3,19 +3,12 @@ import java.io.*;
 
 class BOJ_1240 {
     static class Node{
-        int from;
-        int to;
+        int idx;
         int weight;
 
-        Node(int from, int to, int weight){
-            this.from=from;
-            this.to=to;
+        Node(int idx, int weight){
+            this.idx=idx;
             this.weight=weight;
-        }
-
-        @Override
-        public String toString(){
-            return from+" to "+to+"="+weight;
         }
     }
     static List<List<Node>> graph=new ArrayList<>();
@@ -38,8 +31,8 @@ class BOJ_1240 {
             int to=Integer.parseInt(st.nextToken());
             int weight=Integer.parseInt(st.nextToken());
 
-            graph.get(from).add(new Node(from, to, weight));
-            graph.get(to).add(new Node(to, from, weight));
+            graph.get(from).add(new Node(to, weight));
+            graph.get(to).add(new Node(from, weight));
         }
         StringBuilder sb=new StringBuilder();
         for(int i=0;i<M;i++){
@@ -47,7 +40,6 @@ class BOJ_1240 {
             int from=Integer.parseInt(st.nextToken());
             int to=Integer.parseInt(st.nextToken());
             sb.append(find(from, to)+"\n");
-            System.out.println();
         }
         sb.deleteCharAt(sb.length()-1);
         System.out.println(sb);
@@ -65,24 +57,22 @@ class BOJ_1240 {
         for(Node node : graph. get(from)){
             pq.offer(node);
         }
-        int cost=0;
+
         visited[from]=true;
         while(!pq.isEmpty()){
             Node node=pq.poll();
-            System.out.println(node);
-            int current=node.to;
+            int current=node.idx;
             int weight=node.weight;
 
             if(visited[current]){
                 continue;
             }
             visited[current]=true;
-            cost+=weight;
             if(current==to){
-                return cost;
+                return weight;
             }
             for(Node next : graph.get(current)){
-                pq.offer(next);
+                pq.offer(new Node(next.idx, next.weight+weight));
             }
         }
 
