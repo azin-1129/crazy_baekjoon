@@ -3,6 +3,7 @@ import java.io.*;
 
 class BOJ_15681 {
     static List<List<Integer>> graph=new ArrayList<>();
+    static List<List<Integer>> childInfo=new ArrayList<>();
     static int[] childCount, parent;
     static int N;
     public static void main(String[] args) throws Exception {
@@ -16,7 +17,7 @@ class BOJ_15681 {
         parent=new int[N+1];
         for(int n=0;n<=N;n++){
             graph.add(new ArrayList<>());
-            childCount[n]+=1;
+            childInfo.add(new ArrayList<>());
         }
         int R=Integer.parseInt(st.nextToken());
         int Q=Integer.parseInt(st.nextToken());
@@ -28,8 +29,8 @@ class BOJ_15681 {
             graph.get(V).add(U);
         }
 
-        bfs(R);
-        // System.out.println(Arrays.toString(childCount));
+        Arrays.fill(childCount, 1);
+        calc(R, -1);
         StringBuilder sb=new StringBuilder();
         for(int q=0;q<Q;q++){
             int U=Integer.parseInt(br.readLine());
@@ -39,34 +40,15 @@ class BOJ_15681 {
         System.out.println(sb);
         br.close();
     }
-    static void bfs(int root){
-        boolean[] visited=new boolean[N+1];
-        Queue<Integer> q=new ArrayDeque<>();
-        q.offer(root);
-        while(!q.isEmpty()){
-            int current=q.poll();
-            if(visited[current]){
-                continue;
-            }
-            visited[current]=true;
-            // 부모까지 갱신 필요
-            calc(parent[current]);
-            for(int next : graph.get(current)){
-                if(!visited[next]){
-                    parent[next]=current;
-                    q.offer(next);
-                }
+
+    static void calc(int current, int parent){
+        for(int next : graph.get(current)){
+            if(next!=parent){
+                calc(next, current);
             }
         }
-    }
-    static void calc(int before){
-        if(before==0){
-            return;
+        if(parent!=-1){
+            childCount[parent]+=childCount[current];
         }
-        childCount[before]+=1;
-        calc(find(before));
-    }
-    static int find(int x){
-        return parent[x];
     }
 }
