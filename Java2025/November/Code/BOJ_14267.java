@@ -32,13 +32,19 @@ class BOJ_14267 {
             graph.get(parent).add(i);
         }
 
+        int[] weights=new int[n+1];
         for(int j=0;j<m;j++){
             st=new StringTokenizer(br.readLine(), " ");
             int i=Integer.parseInt(st.nextToken());
             int w=Integer.parseInt(st.nextToken());
-            bfs(i, w);
+            weights[i]+=w;
         }
-
+        for(int i=2;i<=n;i++){
+            if(weights[i]>0){
+                bfs(i, weights[i]);
+            }
+        }
+        
         StringBuilder sb=new StringBuilder();
         for(int i=1;i<=n;i++){
             sb.append(result[i]+" ");
