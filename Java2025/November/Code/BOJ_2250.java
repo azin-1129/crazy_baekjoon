@@ -26,27 +26,30 @@ class BOJ_2250 {
 
         void init(int idx, int left, int right){
             System.out.println(idx+"번 노드의 자녀:"+left+", "+right);
+            System.out.println("****"+idx+"노드가 있는지 탐색합니다..");
             Node node=find(this.root, idx);
             System.out.println("노드를 찾았어요."+node);
-            node.left=new Node(left);
-            node.right=new Node(right);
+            if(left!=-1){
+                node.left=new Node(left);
+            }
+            if(right!=-1){
+                node.right=new Node(right);
+            }
         }
 
         Node find(Node node, int idx){
-            System.out.println(idx+"번을 탐색중..");
+            System.out.println(idx+"번을 찾는중..");
             System.out.println("현재:"+node);
-            if(node.idx!=idx){
-                if(node.left!=null){
-                    find(node.left, idx);
-                }
-                if(node.right!=null){
-                    find(node.right, idx);
-                }
+            // if x<y : less than 0
+            // if x>y : greater than 0
+            int compResult=Integer.compare(node.idx, idx);
+            if(compResult<0){
+                return find(node.right, idx);
+            }else if(compResult>0){
+                return find(node.left, idx);
             }else{
                 return node;
             }
-
-            return null;
         }
 
         void inOrder(int level){
