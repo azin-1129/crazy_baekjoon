@@ -4,20 +4,6 @@ import java.util.*;
 import java.io.*;
 
 class BOJ_2623 {
-    static class Node{
-        int before;
-        int now;
-
-        Node(int before, int now){
-            this.before=before;
-            this.now=now;
-        }
-
-        @Override
-        public String toString(){
-            return "[현재:"+now+", 이전:"+before+"]";
-        }
-    }
     static StringBuilder sb=new StringBuilder();
     static List<List<Integer>> graph=new ArrayList<>();
     static int[] inDegree;
@@ -54,7 +40,6 @@ class BOJ_2623 {
             }
         }
 
-        System.out.println(graph);
         if(isCycle()){
             sb.append('0'+"\n");
         }else{
@@ -66,34 +51,29 @@ class BOJ_2623 {
         br.close();
     }
     static boolean isCycle(){
-        Queue<Node> q=new ArrayDeque<>();
-        boolean[] visited=new boolean[N+1];
+        Stack<Integer> stack=new Stack<>();
+        boolean[] visited;
         for(int i=1;i<=N;i++){
-            if(inDegree[i]==0){
-                q.offer(new Node(-1, i));
-            }
-        }
-        while(!q.isEmpty()){
-            Node current=q.poll();
-            System.out.println(current);
-            int before=current.before;
-            int now=current.now;
-            if(visited[now]){
-                continue;
-            }
-            visited[now]=true;
-            for(int next : graph.get(now)){
-                if(visited[next]){
-                    if(next!=before){
-                        System.out.println(before+","+now+","+next);
-                        return true;
+            visited=new boolean[N+1];
+            stack.push(i);
+            while(!stack.isEmpty()){
+                int current=stack.pop();
+                if(visited[current]){
+                    continue;
+                }
+                visited[current]=true;
+                for(int next : graph.get(current)){
+                    if(visited[next]){
+                        if(next==i){
+                            return true;
+                        }else{
+                            continue;
+                        }
                     }
-                }else{
-                    q.offer(new Node(now, next));
+                    stack.push(next);
                 }
             }
         }
-
         return false;
     }
     static void topologySort(){
