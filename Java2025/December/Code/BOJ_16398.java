@@ -89,7 +89,7 @@ class BOJ_16398 {
     }
     static int find(int x){
         if(parents[x]!=x){
-            return find(parents[x]);
+            return parents[x]=find(parents[x]);
         }
         return x;
     }
