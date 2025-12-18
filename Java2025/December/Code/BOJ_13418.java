@@ -5,25 +5,22 @@ import java.io.*;
 
 class BOJ_13418 {
     static class Node{
+        int now;
         int next;
-        boolean isLow;
+        int isUpper;
 
-        Node(int next, int isLow){
+        Node(int now, int next, int isUpper){
+            this.now=now;
             this.next=next;
-            if(isLow==0){
-                this.isLow=false;
-            }else{
-                this.isLow=true;
-            }
+            this.isUpper=isUpper;
         }
 
         @Override
         public String toString(){
-            return "[next:"+this.next+", isLow="+this.isLow+"]";
+            return "[now:"+this.now+", next:"+this.next+", isUpper="+this.isUpper+"]";
         }
     }
-    static List<List<Node>> graph=new ArrayList<>();
-    static boolean[] visited;
+    static int[] parents;
     static int lowWeight, highWeight, N;
     public static void main(String[] args) throws Exception {
         String filepath = System.getProperty("user.dir") + "\\Input\\";
@@ -33,48 +30,87 @@ class BOJ_13418 {
 
         st=new StringTokenizer(br.readLine(), " ");
         N=Integer.parseInt(st.nextToken()); // 건물의 수
-        visited=new boolean[N+1];
-        for(int i=0;i<=N;i++){
-            graph.add(new ArrayList<>());
-        }
+
         int M=Integer.parseInt(st.nextToken()); // 도로의 수
-        for(int i=0;i<M;i++){
+                PriorityQueue<Node> lowPq=new PriorityQueue<>(
+            new Comparator<Node>(){
+                @Override
+                public int compare(Node node1, Node node2){
+                    return Integer.compare(node1.isUpper, node2.isUpper);
+                }
+            }
+        );
+        PriorityQueue<Node> highPq=new PriorityQueue<>(
+            new Comparator<Node>(){
+                @Override
+                public int compare(Node node1, Node node2){
+                    return Integer.compare(node2.isUpper, node1.isUpper);
+                }
+            }
+        );
+        for(int i=0;i<=M;i++){
             st=new StringTokenizer(br.readLine(), " ");
             int from=Integer.parseInt(st.nextToken());
             int to=Integer.parseInt(st.nextToken());
-            int isLow=Integer.parseInt(st.nextToken());
-
-            graph.get(from).add(new Node(to, isLow));
-            graph.get(to).add(new Node(from, isLow));
+            int isUpper=Integer.parseInt(st.nextToken())==0?1:0;
+            Node node=new Node(from, to, isUpper);
+            // System.out.println("정보 추가중:"+node);
+            lowPq.offer(node);
+            highPq.offer(node);
         }
 
         // 시작: 항상 0
-        dfs(0, 0, 0);
+
         // 각 MST 완성 후, 총 오르막길 개수**2가 피로도
         // 답 : 제일 피곤한 경로의 피로도-제일 덜 피곤한 경로의 피로도
-        System.out.println(highWeight-lowWeight);
+        System.out.println(topologySort(highPq)-topologySort(lowPq));
         br.close();
     }
-    static void dfs(int node, int edgeCount, int upperCount){
-        if(visited[node]){
-            return;
+    static int topologySort(PriorityQueue<Node> pq){
+        int upperCount=0;
+        int count=0; // 포함한 간선 수
+        parents=new int[N+1];
+        for(int i=1;i<=N;i++){
+            parents[i]=i;
         }
-        System.out.println(node+" 건물 방문중. 거쳐온 길:"+edgeCount+", 오르막 수"+upperCount);
-
-        if(edgeCount==N){ // MST 완성
-            int weight=(int)Math.pow(upperCount, 2);
-            if(lowWeight>weight){
-                lowWeight=weight;
-            }else if(highWeight<weight){
-                highWeight=weight;
+        while(!pq.isEmpty()){
+            if(count==(N)){
+                break;
             }
-            return;
+            Node current=pq.poll();
+            // System.out.println(current);
+            int now=current.now;
+            int next=current.next;
+            int isUpper=current.isUpper;
+            if(union(now, next)){
+                // System.out.println("이 간선을 포함합니다.");
+                upperCount+=isUpper;
+                count++;
+            }
         }
 
-        for(Node nextPath : graph.get(node)){
-            visited[node]=true;
-            dfs(nextPath.next, edgeCount+1, nextPath.isLow ? upperCount+1 : upperCount);
-            visited[node]=false;
+        // System.out.println("오르막길 수:"+upperCount);
+        return upperCount*upperCount;
+    }
+    static boolean union(int v1, int v2){
+        int parentV1=find(v1);
+        int parentV2=find(v2);
+
+        if(parentV1<parentV2){
+            parents[parentV2]=parentV1;
+            return true;
+        }else if(parentV1==parentV2){
+            return false;
+        }else{
+            parents[parentV1]=parentV2;
+            return true;
         }
+    }
+    static int find(int v){
+        if(parents[v]!=v){
+            return parents[v]=find(parents[v]);
+        }
+
+        return v;
     }
 }
