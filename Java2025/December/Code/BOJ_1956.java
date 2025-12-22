@@ -4,7 +4,7 @@ import java.util.*;
 import java.io.*;
 
 class BOJ_1956{
-    static int INF, result=0;
+    static long INF;
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=1956;
@@ -23,7 +23,7 @@ class BOJ_1956{
         int V=Integer.parseInt(st.nextToken());
         int E=Integer.parseInt(st.nextToken());
         INF=E*10000+1;
-        int[][] floyd=new int[V+1][V+1];
+        long[][] floyd=new long[V+1][V+1];
         for(int x=1;x<=V;x++){
             Arrays.fill(floyd[x], INF);
             floyd[x][x]=0;
@@ -44,18 +44,7 @@ class BOJ_1956{
             }
         }
 
-        // for(int x=1;x<=V;x++){
-        //     for(int y=1;y<=V;y++){
-        //         if(floyd[x][y]==INF){
-        //             System.out.print("x ");
-        //         }else{
-        //             System.out.print(floyd[x][y]+" ");
-        //         }
-        //     }
-        //     System.out.println();
-        // }
-
-        int result=INF;
+        long result=INF;
         for(int x=1;x<=V;x++){
             for(int y=1;y<=V;y++){
                 if(x==y){
@@ -64,7 +53,7 @@ class BOJ_1956{
                 if(floyd[x][y]==INF || floyd[y][x]==INF){
                     continue;
                 }
-                int length=floyd[x][y]+floyd[y][x];
+                long length=floyd[x][y]+floyd[y][x];
                 result=Math.min(result, length);
             }
         }
