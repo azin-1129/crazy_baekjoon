@@ -4,7 +4,7 @@ import java.util.*;
 import java.io.*;
 
 class BOJ_21940{
-    static final int MAX_VALUE=1001;
+    static final int INF=200001;
     public static void main(String[] args) throws Exception{
         String filepath=System.getProperty("user.dir")+"\\Input\\";
         int bojNum=21940;
@@ -18,7 +18,7 @@ class BOJ_21940{
         // 플로이드 그래프 초기화
         int[][] floyd=new int[N+1][N+1];
         for(int x=1;x<=N;x++){
-            Arrays.fill(floyd[x], MAX_VALUE);
+            Arrays.fill(floyd[x], INF);
             floyd[x][x]=0;
         }
 
@@ -53,7 +53,7 @@ class BOJ_21940{
         int[] roundTripDists=new int[N+1];
         for(int x=1;x<=N;x++){
             for(int y:activatedCitys){
-                if(floyd[x][y]==MAX_VALUE || floyd[y][x]==MAX_VALUE){
+                if(floyd[x][y]==INF || floyd[y][x]==INF){
                     continue;
                 }
                 // 도시 X를 기준으로 왕복 시간 최댓값 갱신
