@@ -47,15 +47,7 @@ public class BOJ_14938 {
             }
         }
 
-        System.out.println("플로이드 워셜 결과:");
-        for(int x=1;x<=N;x++){
-            for(int y=1;y<=N;y++){
-               System.out.print(floyd[x][y]+" "); 
-            }
-            System.out.println();
-        }
-
-        // 1~n번 시작점부터 낙하, m 이내 노드 아이템 획득(visited 처리)
+        // 1~n번 시작점부터 낙하, m 이내 노드 아이템 획득
         int result=0;
         for(int from=1;from<=N;from++){
             int cost=0;
