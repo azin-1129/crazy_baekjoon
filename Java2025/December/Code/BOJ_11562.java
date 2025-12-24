@@ -41,13 +41,6 @@ class BOJ_11562{
             }
         }
 
-        for(int x=1;x<=N;x++){
-            for(int y=1;y<=N;y++){
-                System.out.print(floyd[x][y]+" ");
-            }
-            System.out.println();
-        }
-
         StringBuilder sb=new StringBuilder();
         int K=Integer.parseInt(br.readLine());
         for(int i=0;i<K;i++){
