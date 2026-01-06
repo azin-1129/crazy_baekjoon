@@ -47,17 +47,15 @@ class BOJ_17835 {
         int M=Integer.parseInt(st.nextToken());
         int K=Integer.parseInt(st.nextToken());
         // 도로 정보 M개. U to V = C
+        // 면접장에서 출발하기 위해, edge를 역방향으로 잡는다.
         for(int i=0;i<M;i++){
             st=new StringTokenizer(br.readLine(), " ");
             int from=Integer.parseInt(st.nextToken());
             int to=Integer.parseInt(st.nextToken());
             int weight=Integer.parseInt(st.nextToken());
 
-            graph.get(from).add(new Node(to, weight));
+            graph.get(to).add(new Node(from, weight));
         }
-
-        // 각 도시 -> 면접장 다익스트라 해서,
-        // 면접장 최단 거리가 얼마인지 알아내기
 
         // 면접장 도시 번호
         resultIdx=new int[K];
@@ -66,19 +64,19 @@ class BOJ_17835 {
             resultIdx[i]=Integer.parseInt(st.nextToken());
         }
 
-        for(int i=1;i<=N;i++){
-            dijkstra(i);
-        }
+        dijkstra();
 
         System.out.println(longestCity);
         System.out.println(longestWeight);
         br.close();
     }
-    static void dijkstra(int start){
+    static void dijkstra(){
         long[] shortWeight=new long[N+1];
         Arrays.fill(shortWeight, Long.MAX_VALUE);
         PriorityQueue<Node> pq=new PriorityQueue<>();
-        pq.offer(new Node(start, 0));
+        for(int idx:resultIdx){ // 멀티소스 다익스트라
+            pq.offer(new Node(idx, 0));
+        }
         while(!pq.isEmpty()){
             Node node=pq.poll();
             int idx=node.idx;
@@ -94,18 +92,12 @@ class BOJ_17835 {
             }
         }
 
-        // 최단거리 : start로 부터 가장 가까운 면접장 거리
-        long shortestWeight=Long.MAX_VALUE;
-        for(int resIdx : resultIdx){
-            long dist=shortWeight[resIdx];
-            if(dist<shortestWeight){
-                shortestWeight=dist;
+        for(int i=1;i<=N;i++){
+            long weight=shortWeight[i];
+            if(weight>longestWeight){
+                longestCity=i;
+                longestWeight=weight;
             }
-        }
-
-        if(longestWeight<shortestWeight){
-            longestWeight=shortestWeight;
-            longestCity=start;
         }
     }
 }
