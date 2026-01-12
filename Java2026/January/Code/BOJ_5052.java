@@ -27,9 +27,8 @@ class BOJ_5052 {
                 char ch=str.charAt(i);
                 if(node.child.containsKey(ch)){
                     node=node.child.get(ch);
-                    // insert 하고자 하는 단어에 다른 단어의 EOW가 포함된다면 false
+                    // insert 단어에 다른 단어의 EOW가 포함된다면 false
                     if(node.EOW==true){
-                        System.out.println(str+" 추가에 실패했습니다.");
                         return false;
                     }
                 }else{
@@ -38,30 +37,19 @@ class BOJ_5052 {
                 }
             }
 
-            System.out.println(str+"를 추가했습니다.");
-            node.EOW=true;
-            return true;
-        }
-
-        boolean find(String str){
-            Node node=root;
-            for(int i=0;i<str.length();i++){
-                char ch=str.charAt(i);
-                if(node.child.containsKey(ch)){
-                    node=node.child.get(ch);
-                }else{
-                    return false; // 일치하는 단어를 찾지 못함.
-                }
+            // insert 단어의 EOW가 다른 단어에 포함된다면 false
+            if(node.child.size()==0){
+                node.EOW=true;
+                return true;
+            }else{
+                return false;
             }
-
-            return true; // 접두사 판정
         }
     }
     public static void main(String[] args) throws Exception {
         String filepath = System.getProperty("user.dir") + "\\Input\\";
         int bojNum=5052;
         BufferedReader br = new BufferedReader(new FileReader(filepath + "input" + bojNum + ".txt"));
-        StringTokenizer st;
 
         int T=Integer.parseInt(br.readLine());
         StringBuilder sb=new StringBuilder();
@@ -75,12 +63,7 @@ class BOJ_5052 {
                     continue;
                 }
                 String tell=br.readLine();
-                if(trie.find(tell)){ // 이 번호는 다른 번호의 접두사인지 판단
-                    flag=true;
-                    continue;
-                }
-
-                if(!trie.insert(tell)){ // 다른 번호가 이 번호의 접두사인지 판단
+                if(!trie.insert(tell)){
                     flag=true;
                 }
             }
